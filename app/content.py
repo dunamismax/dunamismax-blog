@@ -94,6 +94,11 @@ async def load_post_async(md_file: Path) -> dict[str, Any] | None:
         metadata["slug"] = create_slug(md_file.name)
         metadata["filename"] = md_file.name
 
+        content = post.content or ""
+        metadata["content"] = content
+        metadata["word_count"] = len(content.split())
+        metadata["read_time"] = max(1, metadata["word_count"] // 200)
+
         # Parse date with enhanced error handling
         if "date" in metadata:
             metadata["date"] = parse_date(metadata["date"], md_file)
@@ -125,7 +130,6 @@ def parse_date(date_value: Any, md_file: Path) -> datetime:
                 "%d/%m/%Y",
                 "%m/%d/%Y",
                 "%Y-%m-%d %H:%M:%S",
-                "%m/%d/%Y",  # 8/1/2025 format
             ]:
                 try:
                     return datetime.strptime(date_value, fmt)
@@ -179,6 +183,12 @@ def get_all_posts() -> list[dict[str, Any]]:
             metadata = validate_post_metadata(post.metadata, md_file.name)
             metadata["slug"] = create_slug(md_file.name)
             metadata["filename"] = md_file.name
+
+            # Content metrics
+            content = post.content or ""
+            metadata["content"] = content
+            metadata["word_count"] = len(content.split())
+            metadata["read_time"] = max(1, metadata["word_count"] // 200)
 
             # Parse date with enhanced error handling
             if "date" in metadata:
@@ -330,6 +340,10 @@ def get_post_by_slug(slug: str) -> dict[str, Any] | None:
 
         # Validate and process metadata using new validation function
         metadata = validate_post_metadata(post.metadata or {}, matching_file.name)
+
+        content_text = post.content or ""
+        metadata["word_count"] = len(content_text.split())
+        metadata["read_time"] = max(1, metadata["word_count"] // 200)
 
         # Parse date with enhanced error handling
         if "date" in metadata:

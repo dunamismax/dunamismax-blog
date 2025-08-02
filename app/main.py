@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-from functools import lru_cache
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -25,18 +24,16 @@ posts_cache = TTLCache(maxsize=100, ttl=600)
 content_cache = TTLCache(maxsize=50, ttl=1200)
 
 
-@lru_cache(maxsize=1)
 def get_cached_posts() -> list[dict]:
     """Get all posts with caching for improved performance."""
     cache_key = "all_posts"
-    if cache_key in posts_cache:
-        logger.info("Serving posts from cache")
+    try:
         return posts_cache[cache_key]
-
-    posts = get_all_posts()
-    posts_cache[cache_key] = posts
-    logger.info(f"Cached {len(posts)} posts")
-    return posts
+    except KeyError:
+        posts = get_all_posts()
+        posts_cache[cache_key] = posts
+        logger.info(f"Cached {len(posts)} posts")
+        return posts
 
 
 def get_cached_post(slug: str) -> dict | None:
@@ -56,7 +53,6 @@ def clear_cache() -> None:
     """Clear all caches - useful for development or content updates."""
     posts_cache.clear()
     content_cache.clear()
-    get_cached_posts.cache_clear()
     logger.info("All caches cleared")
 
 
@@ -389,7 +385,7 @@ def create_blog_stats(posts: list) -> ui.element:
             ui.label("Posts").classes("text-sm opacity-70")
 
         with ui.column().classes("items-center"):
-            total_words = sum(len(post.get("content", "").split()) for post in posts)
+            total_words = sum(post.get("word_count", 0) for post in posts)
             ui.label(f"{total_words:,}").classes("text-2xl font-bold").style(
                 "color: var(--orange-accent)"
             )
@@ -464,8 +460,10 @@ def blog_index() -> None:
                                     ).classes("blog-post-meta text-sm opacity-70")
 
                                 # Reading time estimation
-                                word_count = len(post.get("content", "").split())
-                                read_time = max(1, word_count // 200)
+                                word_count = post.get("word_count", 0)
+                                read_time = post.get(
+                                    "read_time", max(1, word_count // 200)
+                                )
                                 ui.label(f"{read_time} min read").classes(
                                     "text-sm opacity-60"
                                 )
