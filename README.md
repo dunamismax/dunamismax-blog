@@ -5,7 +5,9 @@
 # NiceGUI Blog
 
 <p align="center">
-  <strong><a href="https://blog.dunamismax.com/">Live Demo</a></strong>
+  <a href="https://blog.dunamismax.com/">
+    <img src="https://img.shields.io/badge/Live-Demo-713A90.svg?style=for-the-badge&logo=rocket&logoColor=white" alt="Live Demo">
+  </a>
 </p>
 
 <details>
