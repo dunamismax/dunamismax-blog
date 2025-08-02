@@ -6,9 +6,12 @@
   <strong><a href="https://blog.dunamismax.com/">Live Demo</a></strong>
 </p>
 
+<details>
+<summary>Click to view the blog in action</summary>
 <p align="center">
-  <blockquote class="imgur-embed-pub" lang="en" data-id="a/eza9YfP"  ><a href="//imgur.com/a/eza9YfP">NiceGUI Blog</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+  <img src="https://github.com/dunamismax/images/blob/main/python/website-interaction-recording-high-quality.gif" alt="NiceGUI Blog Demo">
 </p>
+</details>
 
 <p align="center">
   <a href="https://github.com/dunamismax/nicegui-blog">
