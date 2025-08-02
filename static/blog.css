@@ -233,6 +233,8 @@
         .modern-search-input:focus {
             border-color: var(--purple-accent) !important;
             box-shadow: 0 0 0 2px rgba(113, 58, 144, 0.2) !important;
+            border-radius: 0.75rem !important;
+            padding: 0.75rem 1rem !important;
             outline: none !important;
         }
 
