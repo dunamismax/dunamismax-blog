@@ -2,6 +2,8 @@
   <img src="https://github.com/dunamismax/images/blob/main/python/NiceBlog.png" alt="NiceGUI Blog" width="300" />
 </p>
 
+# NiceGUI Blog
+
 <p align="center">
   <strong><a href="https://blog.dunamismax.com/">Live Demo</a></strong>
 </p>
@@ -36,8 +38,6 @@
 ---
 
 <div align="center">
-
-# NiceGUI Blog
 
 <p style="color: #713A90; font-size: 18px; font-weight: 500;">
 A stunning dark-themed blog application built with Python 3.13 and NiceGUI v2.22.1<br>
