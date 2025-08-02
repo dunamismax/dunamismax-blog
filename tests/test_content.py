@@ -1,6 +1,8 @@
 """Tests for content management utilities."""
 
+import os
 import sys
+from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -57,3 +59,22 @@ def test_get_post_by_slug_sanitizes_html(tmp_path: Path) -> None:
         assert "<script>" not in post["content"]
     finally:
         test_file.unlink(missing_ok=True)
+
+
+def test_dates_use_file_mtime(tmp_path: Path, monkeypatch) -> None:
+    """Post dates should reflect the file's last modified time."""
+    posts_dir = tmp_path / "content" / "posts"
+    posts_dir.mkdir(parents=True)
+    md = posts_dir / "sample.md"
+    md.write_text(
+        "---\ntitle: Sample\ndate: 1/1/2000\n---\ncontent",
+        encoding="utf-8",
+    )
+    mtime = 1_700_000_000
+    os.utime(md, (mtime, mtime))
+    monkeypatch.chdir(tmp_path)
+    posts = get_all_posts()
+    assert posts[0]["date"] == datetime.fromtimestamp(mtime)
+    post = get_post_by_slug("sample")
+    assert post is not None
+    assert post["date"] == datetime.fromtimestamp(mtime)
