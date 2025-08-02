@@ -65,6 +65,7 @@ Markdown posts use YAML frontmatter:
 ---
 title: "Post Title"
 date: "8/1/2025"
+time: "03:12"
 summary: "Brief description"
 tags: ["tag1", "tag2"]
 ---

@@ -1,8 +1,14 @@
 ---
-title: "Under the Hood: Powering the NiceGUI Blog"
-date: "9/10/2025"
-summary: "Explore the full stack—from Python and NiceGUI to caching, styling, and build tools—that keeps this blog humming."
-tags: ["nicegui", "tech-stack", "python", "blog"]
+title: 'Under the Hood: Powering the NiceGUI Blog'
+date: 8/2/2025
+time: 03:12
+summary: Explore the full stack—from Python and NiceGUI to caching, styling, and build
+  tools—that keeps this blog humming.
+tags:
+- nicegui
+- tech-stack
+- python
+- blog
 ---
 
 # Under the Hood: Powering the NiceGUI Blog

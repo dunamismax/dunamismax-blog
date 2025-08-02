@@ -153,8 +153,22 @@ def get_all_posts() -> list[dict[str, Any]]:
             metadata["word_count"] = len(content.split())
             metadata["read_time"] = max(1, metadata["word_count"] // 200)
 
-            # Always use the file's last modified time for dates
-            metadata["date"] = get_last_modified(md_file)
+            # Combine provided date and time for sorting, fallback to file mtime
+            date_str = metadata.get("date")
+            time_str = metadata.get("time")
+            if date_str:
+                try:
+                    fmt = "%m/%d/%Y"
+                    if time_str:
+                        metadata["date"] = datetime.strptime(
+                            f"{date_str} {time_str}", f"{fmt} %H:%M"
+                        )
+                    else:
+                        metadata["date"] = datetime.strptime(date_str, fmt)
+                except ValueError:
+                    metadata["date"] = get_last_modified(md_file)
+            else:
+                metadata["date"] = get_last_modified(md_file)
 
             posts.append(metadata)
 
@@ -346,8 +360,22 @@ def get_post_by_slug(slug: str) -> dict[str, Any] | None:
         metadata["word_count"] = len(content_text.split())
         metadata["read_time"] = max(1, metadata["word_count"] // 200)
 
-        # Always use the file's last modified time for dates
-        metadata["date"] = get_last_modified(matching_file)
+        # Combine provided date and time for sorting, fallback to file mtime
+        date_str = metadata.get("date")
+        time_str = metadata.get("time")
+        if date_str:
+            try:
+                fmt = "%m/%d/%Y"
+                if time_str:
+                    metadata["date"] = datetime.strptime(
+                        f"{date_str} {time_str}", f"{fmt} %H:%M"
+                    )
+                else:
+                    metadata["date"] = datetime.strptime(date_str, fmt)
+            except ValueError:
+                metadata["date"] = get_last_modified(matching_file)
+        else:
+            metadata["date"] = get_last_modified(matching_file)
 
         result = {
             "slug": slug,

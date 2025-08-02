@@ -1,8 +1,14 @@
 ---
-title: "Designing a Dark Mode Dashboard with NiceGUI"
-date: "8/10/2025"
-summary: "Create a sleek dark-themed dashboard using NiceGUI, Pico.css, and Python." 
-tags: ["nicegui", "dashboard", "dark-mode", "ui", "tutorial"]
+title: Designing a Dark Mode Dashboard with NiceGUI
+date: 8/2/2025
+time: 03:06
+summary: Create a sleek dark-themed dashboard using NiceGUI, Pico.css, and Python.
+tags:
+- nicegui
+- dashboard
+- dark-mode
+- ui
+- tutorial
 ---
 
 # Designing a Dark Mode Dashboard
