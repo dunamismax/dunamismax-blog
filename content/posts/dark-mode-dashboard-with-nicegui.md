@@ -71,6 +71,8 @@ Adjust colors and spacing through `static/blog.css` to match your brand. Setting
 
 If you need per‑widget tweaks, append Pico classes using `classes('outline')` or add a custom CSS file. Keep overrides minimal so future framework updates remain painless.
 
+For production, the CSS runs through PostCSS (autoprefixer and cssnano) to generate a minified `blog.min.css` served with a service worker for offline use.
+
 ## Responsive Design
 
 Wrap rows in `ui.column()` on narrow screens so widgets stack vertically. Using percentage-based widths or Flexbox classes keeps the layout usable on phones and tablets.

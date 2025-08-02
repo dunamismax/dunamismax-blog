@@ -24,7 +24,8 @@ FROM python:3.13-slim
 
 WORKDIR /app
 COPY . /app
-RUN pip install --no-cache-dir uv && uv pip install .
+RUN pip install --no-cache-dir uv && uv pip install . \
+    && npm ci && npm run build:css
 
 CMD ["uv", "run", "python", "app/main.py"]
 ```
@@ -35,7 +36,8 @@ This single-stage file copies the source and installs dependencies via `uv`. For
 FROM python:3.13-slim AS builder
 WORKDIR /build
 COPY . .
-RUN pip install --no-cache-dir uv && uv pip install .
+RUN pip install --no-cache-dir uv && uv pip install . \
+    && npm ci && npm run build:css
 
 FROM python:3.13-slim
 WORKDIR /app
@@ -83,3 +85,5 @@ Compose files also support named volumes, secrets, and multiple services. You co
 ## Conclusion
 
 Docker packages your NiceGUI app with everything it needs, simplifying deployment to cloud providers or on-prem servers. Pair it with `TTLCache` for snappy performance and you'll have a portable, fast, dark-themed web interface. With a solid container strategy, you can roll out updates confidently and keep environments in sync across your team.
+
+For persistent caching, run a Redis container alongside the app. The built CSS and service worker assets ensure fast, offline-ready pages out of the box.
