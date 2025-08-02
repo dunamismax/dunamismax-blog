@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/dunamismax/images/blob/main/python/NiceBlog.png" alt="NiceGUI Dark Blog" width="350" />
+  <img src="https://github.com/dunamismax/images/blob/main/python/NiceBlog.png" alt="NiceGUI Dark Blog" width="400" />
 </p>
 
 <p align="center">
@@ -59,7 +59,7 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
 </table>
 
 <p align="center">
-  <img src="https://github.com/dunamismax/images/blob/main/python/Repo-Features.png" alt="Repository Features" width="600" />
+  <img src="https://github.com/dunamismax/images/blob/main/python/Repo-Features.png" alt="Repository Features" width="400" />
 </p>
 
 ## Project Structure
@@ -239,7 +239,7 @@ ps aux | grep nicegui-blog
 **User Experience**
 
 - Stunning dark theme UI
-- Purple color scheme  
+- Purple color scheme
 - Lightning-fast performance
 - Real-time search functionality
 - Interactive blog statistics
@@ -250,7 +250,7 @@ ps aux | grep nicegui-blog
 </td>
 <td width="33%">
 
-**Developer Experience**  
+**Developer Experience**
 
 - Built-in security validation
 - Full TypeScript-style hints
@@ -278,7 +278,7 @@ ps aux | grep nicegui-blog
 </table>
 
 <p align="center">
-  <img src="https://github.com/dunamismax/images/blob/main/python/Repo-Features.png" alt="Repository Features Overview" width="600" />
+  <img src="https://github.com/dunamismax/images/blob/main/python/NiceGUI.png" alt="Repository Features Overview" width="400" />
 </p>
 
 ## License
@@ -287,7 +287,7 @@ ps aux | grep nicegui-blog
 
 <img src="https://img.shields.io/badge/License-MIT-713A90?style=for-the-badge&logo=opensource" alt="MIT License">
 
-**This project is licensed under the MIT License**  
+**This project is licensed under the MIT License**
 *Feel free to use, modify, and distribute*
 
 [View License Details](LICENSE)
