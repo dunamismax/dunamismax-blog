@@ -7,9 +7,7 @@
 </p>
 
 <p align="center">
-  <a href="https://imgur.com/a/eza9YfP">
-    <img src="https://imgur.com/gallery/nicegui-blog-k2AnpMq#wpcbc9d" alt="NiceGUI Blog Demo GIF" />
-  </a>
+  <blockquote class="imgur-embed-pub" lang="en" data-id="a/eza9YfP"  ><a href="//imgur.com/a/eza9YfP">NiceGUI Blog</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
 </p>
 
 <p align="center">
