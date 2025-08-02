@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="https://github.com/dunamismax/images/blob/main/python/NiceGUI-Blog-Image.png" alt="NiceGUI Blog Application" width="350" />
+  <img src="https://github.com/dunamismax/images/blob/main/python/NiceBlog.png" alt="NiceGUI Dark Blog" width="350" />
 </p>
 
 <p align="center">
   <a href="https://github.com/dunamismax/nicegui-blog">
-    <img src="https://readme-typing-svg.demolab.com/?font=Inter&weight=600&size=26&pause=800&color=713A90&center=true&vCenter=true&width=1200&height=80&lines=Dark+Theme+NiceGUI+Blog+Application;Purple+%26+Orange+Aesthetic+Design;Lightning+Fast+Python+3.13+Performance;Beautiful+Modern+UI+Components;File+Based+Content+Management;Zero+Database+Dependencies;Standalone+Executable+Distribution;Advanced+Syntax+Highlighting;Mobile+First+Responsive+Design;Professional+Developer+Experience;Built+in+Security+%26+Validation;Interactive+Animations+%26+Transitions;Modern+Build+Tools+Integration;Customizable+Color+Themes;Real+Time+Blog+Statistics;Instant+Search+Functionality;Smart+Tagging+System;Sub+100ms+Response+Times;Production+Ready+Architecture;MIT+Licensed+Open+Source" alt="Typing SVG" />
+    <img src="https://readme-typing-svg.demolab.com/?font=Inter&weight=600&size=26&pause=800&color=713A90&center=true&vCenter=true&width=1200&height=80&lines=Dark+Theme+NiceGUI+Blog+Application;Python+3.13+%2B+NiceGUI+2.22.1;Purple+%26+Orange+Aesthetic+Design;Lightning+Fast+TTL+Cached+Content;Precomputed+Word+Count+%26+Read+Time;Real+Time+Search+%26+Statistics;File+Based+Content+Management;Zero+Database+Dependencies;Standalone+Executable+Distribution;MIT+Licensed+Open+Source" alt="Typing SVG" />
   </a>
 </p>
 
@@ -59,7 +59,7 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
 </table>
 
 <p align="center">
-  <img src="https://github.com/dunamismax/images/blob/main/python/python-checklist.png" alt="Python Development Checklist" width="400" />
+  <img src="https://github.com/dunamismax/images/blob/main/python/Repo-Features.png" alt="Repository Features" width="600" />
 </p>
 
 ## Project Structure
@@ -73,8 +73,8 @@ nicegui-blog/
 │   └── posts/               # Markdown blog posts with front matter
 ├── static/                  # Static assets
 │   └── syntax.css           # Auto-generated Pygments styling
+├── tests/                   # Test suite
 ├── build.py                 # PyInstaller build script
-├── nicegui-blog.spec        # PyInstaller configuration
 └── pyproject.toml           # Modern Python project configuration
 ```
 
@@ -243,6 +243,7 @@ ps aux | grep nicegui-blog
 - Lightning-fast performance
 - Real-time search functionality
 - Interactive blog statistics
+- Precomputed word counts & read times
 - Smart content tagging
 - Mobile-first responsive design
 
@@ -275,6 +276,10 @@ ps aux | grep nicegui-blog
 </td>
 </tr>
 </table>
+
+<p align="center">
+  <img src="https://github.com/dunamismax/images/blob/main/python/Repo-Features.png" alt="Repository Features Overview" width="600" />
+</p>
 
 ## License
 
