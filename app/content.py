@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import re
+import subprocess
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -84,34 +85,24 @@ def validate_post_metadata(metadata: dict[str, Any], filename: str) -> dict[str,
     return validated
 
 
-def parse_date(date_value: Any, md_file: Path) -> datetime:
-    """Parse date with multiple format support and comprehensive error handling."""
-    if isinstance(date_value, datetime):
-        return date_value
+def get_last_modified(md_file: Path) -> datetime:
+    """Return the last modified timestamp for a markdown file.
 
-    if isinstance(date_value, str):
-        try:
-            # Try ISO format first
-            return datetime.fromisoformat(date_value)
-        except ValueError:
-            # Try common date formats
-            for fmt in [
-                "%Y-%m-%d",
-                "%Y/%m/%d",
-                "%B %d, %Y",
-                "%d/%m/%Y",
-                "%m/%d/%Y",
-                "%Y-%m-%d %H:%M:%S",
-            ]:
-                try:
-                    return datetime.strptime(date_value, fmt)
-                except ValueError:
-                    continue
-
-            logger.warning("Could not parse date %r in %s", date_value, md_file)
-            return datetime.fromtimestamp(md_file.stat().st_mtime)
-
-    logger.error("Invalid date type in %s: %s", md_file, type(date_value))
+    Uses the file's Git commit history when available and falls back to the
+    filesystem's modification time if Git information cannot be retrieved.
+    """
+    try:
+        result = subprocess.run(
+            ["git", "log", "-1", "--format=%cI", str(md_file)],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        iso_ts = result.stdout.strip()
+        if iso_ts:
+            return datetime.fromisoformat(iso_ts).replace(tzinfo=None)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        logger.debug("Git metadata unavailable for %s", md_file)
     return datetime.fromtimestamp(md_file.stat().st_mtime)
 
 
@@ -162,11 +153,8 @@ def get_all_posts() -> list[dict[str, Any]]:
             metadata["word_count"] = len(content.split())
             metadata["read_time"] = max(1, metadata["word_count"] // 200)
 
-            # Parse date with enhanced error handling
-            if "date" in metadata:
-                metadata["date"] = parse_date(metadata["date"], md_file)
-            else:
-                metadata["date"] = datetime.fromtimestamp(md_file.stat().st_mtime)
+            # Always use the file's last modified time for dates
+            metadata["date"] = get_last_modified(md_file)
 
             posts.append(metadata)
 
@@ -358,11 +346,8 @@ def get_post_by_slug(slug: str) -> dict[str, Any] | None:
         metadata["word_count"] = len(content_text.split())
         metadata["read_time"] = max(1, metadata["word_count"] // 200)
 
-        # Parse date with enhanced error handling
-        if "date" in metadata:
-            metadata["date"] = parse_date(metadata["date"], matching_file)
-        else:
-            metadata["date"] = datetime.fromtimestamp(matching_file.stat().st_mtime)
+        # Always use the file's last modified time for dates
+        metadata["date"] = get_last_modified(matching_file)
 
         result = {
             "slug": slug,
