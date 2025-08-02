@@ -7,7 +7,7 @@ tags: ["python", "tips", "best-practices", "python313", "coding", "tutorial"]
 
 # Python Tips and Tricks for Better Code
 
-Python's readability hides a wealth of powerful features. Here are fifteen tips to level up your code and take advantage of improvements in Python 3.13.
+Python's readability hides a wealth of powerful features. Here are fifteen tips to level up your code and take advantage of improvements in Python 3.13. This release brings performance tweaks, better error messages, and continued enhancements to typing, making clean code even easier to write.
 
 ## 1. Use enumerate instead of range
 
@@ -16,6 +16,7 @@ items = ['apple', 'banana', 'cherry']
 for index, item in enumerate(items):
     print(f'{index}: {item}')
 ```
+`enumerate` provides the index and value in one call, eliminating manual counters and keeping loops concise.
 
 ## 2. Dictionary get with defaults
 
@@ -23,6 +24,7 @@ for index, item in enumerate(items):
 config = {'debug': True, 'timeout': 30}
 host = config.get('host', 'localhost')
 ```
+`dict.get` lets you supply a fallback without raising `KeyError`, keeping configuration handling tidy.
 
 ## 3. List comprehensions for filtering
 
@@ -30,6 +32,7 @@ host = config.get('host', 'localhost')
 numbers = [1, 2, 3, 4, 5, 6]
 even_squares = [n ** 2 for n in numbers if n % 2 == 0]
 ```
+List comprehensions read left to right, making transformations and filters compact and readable.
 
 ## 4. Use pathlib for file paths
 
@@ -40,6 +43,7 @@ file_path = Path('data') / 'users' / 'profile.json'
 if file_path.exists():
     content = file_path.read_text()
 ```
+`pathlib` abstracts away OS-specific path separators and offers convenient methods for common file operations.
 
 ## 5. F-strings for formatting
 
@@ -48,6 +52,7 @@ name = 'Alice'
 age = 30
 message = f'Hello, my name is {name} and I am {age} years old'
 ```
+F-strings evaluate expressions inline, replacing older `format` calls with a clearer syntax.
 
 ## 6. Data classes for simple containers
 
@@ -60,6 +65,7 @@ class Person:
     age: int
     email: str
 ```
+`@dataclass` automatically adds an initializer and repr, reducing boilerplate for plain data holders.
 
 ## 7. Context managers for resources
 
@@ -71,6 +77,7 @@ with sqlite3.connect('database.db') as conn:
     cursor.execute('SELECT * FROM users')
     results = cursor.fetchall()
 ```
+Context managers ensure files, network connections, and locks are released even when errors occur.
 
 ## 8. Sets for membership tests
 
@@ -79,6 +86,7 @@ valid_colors = {'red', 'green', 'blue'}
 def is_valid_color(color: str) -> bool:
     return color in valid_colors
 ```
+Set lookups are O(1) on average, making them ideal when checking membership repeatedly.
 
 ## 9. Generator expressions for memory efficiency
 
@@ -86,6 +94,7 @@ def is_valid_color(color: str) -> bool:
 numbers = (x**2 for x in range(1_000_000))
 total = sum(numbers)
 ```
+Generators compute values lazily, allowing you to process large sequences without allocating giant lists.
 
 ## 10. any and all for boolean checks
 
@@ -96,6 +105,7 @@ def has_positive(nums: list[int]) -> bool:
 def all_positive(nums: list[int]) -> bool:
     return all(n > 0 for n in nums)
 ```
+`any` returns at the first `True`, while `all` stops at the first `False`, saving work in large collections.
 
 ## 11. Pattern Matching for Cleaner Logic
 
@@ -109,6 +119,7 @@ def handle(event: dict) -> str:
         case _:
             return "unknown"
 ```
+Structural pattern matching introduced in Python 3.10 scales well as event types grow.
 
 ## 12. walrus operator for inline assignments
 
@@ -116,6 +127,7 @@ def handle(event: dict) -> str:
 if (line := input().strip()) != "":
     print(f"You entered {line}")
 ```
+The walrus operator avoids duplicated function calls and keeps conditions tight.
 
 ## 13. pathlib's glob patterns
 
@@ -124,6 +136,7 @@ from pathlib import Path
 for py_file in Path('.').glob('**/*.py'):
     print(py_file)
 ```
+Globbing with `pathlib` yields `Path` objects directly, simplifying further file operations.
 
 ## 14. Using `functools.cache` for pure functions
 
@@ -136,6 +149,7 @@ def fibonacci(n: int) -> int:
         return n
     return fibonacci(n - 1) + fibonacci(n - 2)
 ```
+`functools.cache` memoizes results, dramatically speeding up recursive functions or other pure computations.
 
 ## 15. TypedDict for structured dictionaries
 
@@ -149,5 +163,6 @@ class User(TypedDict):
 def create_user(user: User) -> None:
     print(user['name'])
 ```
+`TypedDict` enforces required keys and types at static analysis time without incurring runtime overhead.
 
 Happy coding!
