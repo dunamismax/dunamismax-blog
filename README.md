@@ -40,6 +40,8 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
 </div>
 </details>
 
+---
+
 <p align="center">
   <a href="https://www.python.org/downloads/release/python-3130/"><img src="https://img.shields.io/badge/Python-3.13+-713A90.svg?logo=python&logoColor=white&style=for-the-badge" alt="Python Version"></a>
   <a href="https://nicegui.io/"><img src="https://img.shields.io/badge/NiceGUI-v2.22.1-713A90.svg?logo=fastapi&logoColor=white&style=for-the-badge" alt="NiceGUI Version"></a>
