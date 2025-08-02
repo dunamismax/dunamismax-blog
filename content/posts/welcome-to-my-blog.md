@@ -16,7 +16,7 @@ tags:
 
 Welcome to a revolutionary blog platform that showcases the transformative power of **NiceGUI v2.22.1**, **Python 3.13**, and **Pico.css v2**. This isn't just another blog—it's a comprehensive demonstration of how modern Python can create beautiful, performant web applications without requiring a single line of JavaScript.
 
-Built from the ground up with 2025's most advanced development practices, this platform masterfully combines the elegance of file-based content management with the robust performance of enterprise-grade caching systems. Every component has been meticulously crafted to deliver an exceptional user experience while preserving the simplicity and developer joy that makes Python the preferred choice for rapid web development.
+Built from the ground up with 2025's most advanced development practices, this platform masterfully combines the elegance of file-based content management with PostCSS-optimized styling, a service worker for offline access, and the robust performance of enterprise-grade caching systems. Every component has been meticulously crafted to deliver an exceptional user experience while preserving the simplicity and developer joy that makes Python the preferred choice for rapid web development.
 
 The platform serves as both a functional blog and a living example of what's possible when you leverage Python's latest capabilities alongside modern web technologies. From blazing-fast load times to seamless content management, this represents the future of Python-driven web applications.
 
@@ -28,7 +28,7 @@ Unlike traditional CMS platforms that require complex database setups and migrat
 
 ### **Lightning-Fast Performance Architecture**
 
-Our sophisticated multi-layer TTL caching system ensures consistent sub-100ms page loads across all content. Smart prefetching algorithms and progressive lazy loading optimize every aspect of the user experience. Performance isn't an afterthought—it's architected into the very foundation of the platform, with every component optimized for speed and efficiency.
+Our sophisticated multi-layer TTL caching system, backed by an optional Redis store, ensures consistent sub-100ms page loads across all content. Smart prefetching algorithms, automatic WebP image generation, and a service worker that caches assets keep performance snappy even offline. Performance isn't an afterthought—it's architected into the very foundation of the platform, with every component optimized for speed and efficiency.
 
 ### **Professional Dark-First Design**
 
@@ -67,15 +67,20 @@ This platform leverages the full spectrum of Python 3.13's revolutionary improve
 
 ```
 nicegui-blog/
-├── app/                    # NiceGUI application 
+├── app/                    # NiceGUI application
 │   ├── main.py            # Modern UI patterns & routing
-│   └── content.py         # Robust content processing
+│   ├── content.py         # Robust content processing
+│   └── monitoring.py      # PageSpeed Insights utility
 ├── content/posts/         # Markdown blog posts
-├── static/               
-│   ├── blog.css          # Modern CSS with custom properties
+├── static/
+│   ├── blog.css          # Source CSS with custom properties
+│   ├── blog.min.css      # Minified CSS output
 │   ├── syntax.css        # Auto-generated Pygments themes
+│   ├── sw.js             # Service worker for offline caching
 │   └── favicon/          # Complete favicon suite
 ├── tests/                # Comprehensive test coverage
+├── package.json          # Web tooling dependencies
+├── postcss.config.js     # CSS optimization pipeline
 └── pyproject.toml        # Modern Python packaging
 ```
 
@@ -185,8 +190,9 @@ Write your post in **Markdown** with full support for:
 1. **Create** a new `.md` file in `content/posts/`
 2. **Add** YAML frontmatter with metadata
 3. **Write** your content in Markdown
-4. **Save** and see it appear instantly at `http://localhost:8080`
-5. **Deploy** when ready—no build step required!
+4. **Run** `npm run build:css` to regenerate optimized styles
+5. **Save** and see it appear instantly at `http://localhost:8080`
+6. **Deploy** when ready
 
 ## **Perfect For**
 

@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import asyncio
 import hmac
+import json
 import logging
 import os
 from pathlib import Path
 from typing import Any
 
+import redis.asyncio as redis
 from cachetools import TTLCache
 from fastapi import Request
 from nicegui import app, ui
@@ -29,6 +32,27 @@ content_cache: TTLCache[str, dict[str, Any]] = TTLCache(
     maxsize=50, ttl=CONTENT_CACHE_TTL
 )
 
+redis_client: redis.Redis | None = None
+redis_url = os.getenv("REDIS_URL")
+if redis_url:
+    redis_client = redis.from_url(redis_url, encoding="utf-8", decode_responses=True)
+
+SECURITY_HEADERS = {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "X-XSS-Protection": "1; mode=block",
+    "Strict-Transport-Security": "max-age=31536000",
+    # Allow NiceGUI's inline scripts/styles and required CDN resources
+    "Content-Security-Policy": (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://fonts.googleapis.com; "
+        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; "
+        "font-src 'self' https://fonts.gstatic.com; "
+        "img-src 'self' data:; "
+        "connect-src 'self';"
+    ),
+}
+
 # Current list of posts shown on the index page
 filtered_posts: list[dict[str, Any]] = []
 current_page: int = 1
@@ -37,20 +61,49 @@ search_query: str = ""
 active_tags: list[str] = []
 
 
+@app.middleware("http")
+async def apply_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    for header, value in SECURITY_HEADERS.items():
+        response.headers.setdefault(header, value)
+    return response
+
+
 def get_cached_posts() -> list[dict[str, Any]]:
     """Get all posts with caching for improved performance."""
     cache_key = "all_posts"
+    if redis_client:
+        try:
+            data = asyncio.run(redis_client.get(cache_key))
+            if data:
+                return json.loads(data)
+        except Exception:
+            logger.exception("Redis get failed for %s", cache_key)
     try:
         return posts_cache[cache_key]
     except KeyError:
         posts = get_all_posts()
         posts_cache[cache_key] = posts
+        if redis_client:
+            try:
+                asyncio.run(
+                    redis_client.setex(cache_key, POSTS_CACHE_TTL, json.dumps(posts))
+                )
+            except Exception:
+                logger.exception("Redis set failed for %s", cache_key)
         logger.info(f"Cached {len(posts)} posts")
         return posts
 
 
 def get_cached_post(slug: str) -> dict[str, Any] | None:
     """Get a single post with caching for improved performance."""
+    if redis_client:
+        try:
+            data = asyncio.run(redis_client.get(slug))
+            if data:
+                return json.loads(data)
+        except Exception:
+            logger.exception("Redis get failed for %s", slug)
     if slug in content_cache:
         logger.info(f"Serving post '{slug}' from cache")
         return content_cache[slug]
@@ -58,6 +111,13 @@ def get_cached_post(slug: str) -> dict[str, Any] | None:
     post = get_post_by_slug(slug)
     if post:
         content_cache[slug] = post
+        if redis_client:
+            try:
+                asyncio.run(
+                    redis_client.setex(slug, CONTENT_CACHE_TTL, json.dumps(post))
+                )
+            except Exception:
+                logger.exception("Redis set failed for %s", slug)
         logger.info(f"Cached post '{slug}'")
     return post
 
@@ -66,7 +126,20 @@ def clear_cache() -> None:
     """Clear all caches - useful for development or content updates."""
     posts_cache.clear()
     content_cache.clear()
+    if redis_client:
+        try:
+            asyncio.run(redis_client.flushdb())
+        except Exception:
+            logger.exception("Redis flush failed")
     logger.info("All caches cleared")
+
+
+@app.post("/vitals")
+async def vitals_endpoint(request: Request) -> dict[str, str]:
+    """Receive Web Vitals metrics from the browser."""
+    data = await request.json()
+    logger.info("Web vitals: %s", data)
+    return {"status": "ok"}
 
 
 def is_admin_authorized(request: Request) -> bool:
@@ -108,7 +181,7 @@ def add_global_styles() -> None:
         <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>
         <link href=\"https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=JetBrains+Mono:ital,wght@0,400..800;1,400..800&display=swap\" rel=\"stylesheet\">
         <link rel=\"stylesheet\" href=\"/static/syntax.css\">
-        <link rel=\"stylesheet\" href=\"/static/blog.css\">
+        <link rel=\"stylesheet\" href=\"/static/blog.min.css\">
 
         <!-- Comprehensive Favicon Support -->
         <link rel=\"icon\" type=\"image/x-icon\" href=\"/static/favicon/favicon.ico\" sizes=\"32x32\">
@@ -254,6 +327,28 @@ def add_global_styles() -> None:
         });
         </script>
     """,
+        shared=True,
+    )
+
+    ui.add_head_html(
+        """
+        <script>
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/static/sw.js');
+          });
+        }
+        </script>
+        <script src=\"https://unpkg.com/web-vitals@3/dist/web-vitals.iife.js\"></script>
+        <script>
+        function sendToAnalytics(metric) {
+          navigator.sendBeacon('/vitals', JSON.stringify(metric));
+        }
+        webVitals.getCLS(sendToAnalytics);
+        webVitals.getINP(sendToAnalytics);
+        webVitals.getLCP(sendToAnalytics);
+        </script>
+        """,
         shared=True,
     )
 

@@ -44,9 +44,9 @@ Seamlessly mount existing FastAPI routers, use dependency injection, and leverag
 
 Built-in WebSocket support enables server-push updates, live data streaming, and collaborative features without complex setup.
 
-### **Zero-Config Deployment**
+### **Minimal Build & Deployment**
 
-Deploy as PyInstaller executables, Docker containers, or traditional Python applications. No build steps, asset compilation, or frontend tooling required.
+Deploy as PyInstaller or Briefcase executables, Docker containers, or traditional Python applications. A lightweight PostCSS step compiles `blog.css` to `blog.min.css`, and a service worker plus optional Redis layer handle offline caching and persistent data.
 
 ## Essential Components & Modern Patterns
 

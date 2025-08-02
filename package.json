@@ -1,0 +1,14 @@
+{
+  "name": "nicegui-blog",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "autoprefixer": "^10.4.16",
+    "cssnano": "^6.0.1",
+    "postcss": "^8.4.31",
+    "postcss-cli": "^11.0.0"
+  },
+  "scripts": {
+    "build:css": "postcss static/blog.css -o static/blog.min.css"
+  }
+}
