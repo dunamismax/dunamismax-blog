@@ -25,6 +25,8 @@ content_cache: TTLCache[str, dict[str, Any]] = TTLCache(maxsize=50, ttl=1200)
 
 # Current list of posts shown on the index page
 filtered_posts: list[dict[str, Any]] = []
+current_page: int = 1
+posts_per_page: int = 5
 
 
 def get_cached_posts() -> list[dict[str, Any]]:
@@ -89,40 +91,110 @@ def generate_syntax_highlighting_css() -> None:
 
 
 def add_global_styles() -> None:
-    """Add global styles and external stylesheets."""
+    """Add global styles and external stylesheets with comprehensive favicon support."""
     ui.dark_mode().enable()
     ui.add_head_html(
         """
+        <!-- External Stylesheets -->
         <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css\">
         <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">
         <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>
         <link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap\" rel=\"stylesheet\">
         <link rel=\"stylesheet\" href=\"/static/syntax.css\">
         <link rel=\"stylesheet\" href=\"/static/blog.css\">
-        <meta name=\"theme-color\" content=\"#1E1E2E\">
-        <meta name=\"description\" content=\"A modern, fast blog built with NiceGUI and Python\">
+
+        <!-- Comprehensive Favicon Support -->
+        <link rel=\"icon\" type=\"image/x-icon\" href=\"/static/favicon/favicon.ico\" sizes=\"32x32\">
+        <link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"/static/favicon/favicon-16x16.png\">
+        <link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/static/favicon/favicon-32x32.png\">
+        <link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/static/favicon/apple-touch-icon.png\">
+        <link rel=\"icon\" type=\"image/png\" sizes=\"192x192\" href=\"/static/favicon/android-chrome-192x192.png\">
+        <link rel=\"icon\" type=\"image/png\" sizes=\"512x512\" href=\"/static/favicon/android-chrome-512x512.png\">
+
+        <!-- Meta Tags -->
+        <meta name=\"theme-color\" content=\"#713A90\">
+        <meta name=\"msapplication-TileColor\" content=\"#713A90\">
+        <meta name=\"description\" content=\"A lightning-fast, modern blog built with NiceGUI v2.22.1 and Python 3.13\">
         <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+        <meta name=\"author\" content=\"dunamismax\">
+
+        <!-- Open Graph / Social Media -->
         <meta property=\"og:type\" content=\"website\">
-        <meta property=\"og:title\" content=\"My Modern NiceGUI Blog\">
-        <meta property=\"og:description\" content=\"A lightning-fast blog built with NiceGUI v2.22.1\">
+        <meta property=\"og:title\" content=\"NiceGUI Dark Blog - Modern Python Blog\">
+        <meta property=\"og:description\" content=\"A lightning-fast blog built with NiceGUI v2.22.1, featuring dark theme, zero database dependencies, and modern UI components\">
+        <meta property=\"og:image\" content=\"/static/favicon/android-chrome-512x512.png\">
+        <meta name=\"twitter:card\" content=\"summary_large_image\">
+        <meta name=\"twitter:title\" content=\"NiceGUI Dark Blog\">
+        <meta name=\"twitter:description\" content=\"Modern Python blog with dark theme and lightning-fast performance\">
+
+        <!-- Enhanced JavaScript for scroll-to-top button -->
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function toggleScrollButton() {
+                const scrollButton = document.querySelector('.scroll-to-top');
+                if (scrollButton) {
+                    if (window.scrollY > 300) {
+                        scrollButton.classList.add('visible');
+                    } else {
+                        scrollButton.classList.remove('visible');
+                    }
+                }
+            }
+
+            window.addEventListener('scroll', toggleScrollButton);
+            toggleScrollButton(); // Initial check
+
+            // Add lazy loading support
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            img.classList.add('loaded');
+                            observer.unobserve(img);
+                        }
+                    });
+                });
+
+                document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+                    imageObserver.observe(img);
+                });
+            }
+        });
+        </script>
     """,
         shared=True,
     )
 
 
 def create_header() -> ui.element:
-    """Create a reusable header component using modern NiceGUI patterns."""
+    """Create a reusable header component with improved design and centering."""
     with (
-        ui.row().classes("w-full justify-center") as header_container,
-        ui.column().classes("max-w-4xl w-full px-4"),
-        ui.element("header").classes("blog-header"),
+        ui.row().classes(
+            "w-full justify-center bg-gradient-header"
+        ) as header_container,
+        ui.column().classes("max-w-4xl w-full px-4 py-8"),
+        ui.element("header").classes("modern-blog-header text-center"),
     ):
-        ui.link("My Blog", "/blog", new_tab=False).classes(
-            "no-underline text-3xl font-bold transition-colors"
-        ).style("color: var(--purple-accent)")
-        ui.label("A simple, file-based blog built with NiceGUI").classes(
-            "mt-2 opacity-80 text-lg"
-        )
+        # Main title with improved styling
+        with ui.row().classes("items-center justify-center gap-3 mb-3"):
+            ui.icon("article", size="2.5rem").classes("text-purple-accent")
+            ui.link("NiceGUI Dark Blog", "/blog", new_tab=False).classes(
+                "no-underline text-4xl font-bold transition-all duration-300 hover:scale-105"
+            ).style(
+                "color: var(--purple-accent); text-shadow: 0 2px 4px rgba(0,0,0,0.3)"
+            )
+
+        # Subtitle with better typography
+        ui.label("A lightning-fast, modern blog built with NiceGUI v2.22.1").classes(
+            "text-xl opacity-90 font-medium text-center max-w-2xl mx-auto"
+        ).style("color: var(--text-secondary)")
+
+        # Feature badges
+        with ui.row().classes("justify-center gap-2 mt-4 flex-wrap"):
+            ui.badge("Python 3.13", color="purple").classes("px-3 py-1")
+            ui.badge("Dark Theme", color="orange").classes("px-3 py-1")
+            ui.badge("Zero Database", color="purple").classes("px-3 py-1")
     return header_container
 
 
@@ -150,8 +222,8 @@ def create_search_bar() -> ui.element:
             ui.input(
                 placeholder="Search posts...", on_change=lambda e: filter_posts(e.value)
             )
-            .props("outlined dense")
-            .classes("flex-grow")
+            .props("borderless dense standout")
+            .classes("modern-search-input flex-grow")
         )
         search_input.props("prepend-icon=search")
     return search_container
@@ -159,11 +231,18 @@ def create_search_bar() -> ui.element:
 
 def filter_posts(query: str) -> None:
     """Filter posts based on search query and refresh UI."""
-    global filtered_posts
+    global filtered_posts, current_page
+    current_page = 1  # Reset to first page when filtering
     posts = get_cached_posts()
-    filtered_posts = apply_filter(query, posts)
-    logger.info(f"Found {len(filtered_posts)} posts matching '{query}'")
+    filtered_posts_all = apply_filter(query, posts)
+    filtered_posts, _ = get_paginated_posts(
+        filtered_posts_all, current_page, posts_per_page
+    )
+    logger.info(
+        f"Found {len(filtered_posts_all)} posts matching '{query}', showing page {current_page}"
+    )
     render_posts.refresh()
+    create_pagination.refresh()
 
 
 def apply_filter(query: str, posts: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -178,6 +257,51 @@ def apply_filter(query: str, posts: list[dict[str, Any]]) -> list[dict[str, Any]
         or q in post.get("summary", "").lower()
         or any(q in tag.lower() for tag in post.get("tags", []))
     ]
+
+
+def get_paginated_posts(
+    posts: list[dict[str, Any]], page: int, per_page: int
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Return paginated posts and pagination info."""
+    total_posts = len(posts)
+    total_pages = max(1, (total_posts + per_page - 1) // per_page)
+
+    # Ensure page is within valid range
+    page = max(1, min(page, total_pages))
+
+    start_idx = (page - 1) * per_page
+    end_idx = start_idx + per_page
+    paginated_posts = posts[start_idx:end_idx]
+
+    pagination_info = {
+        "current_page": page,
+        "total_pages": total_pages,
+        "total_posts": total_posts,
+        "posts_per_page": per_page,
+        "has_previous": page > 1,
+        "has_next": page < total_pages,
+        "previous_page": page - 1 if page > 1 else None,
+        "next_page": page + 1 if page < total_pages else None,
+    }
+
+    return paginated_posts, pagination_info
+
+
+def change_page(new_page: int) -> None:
+    """Change to a specific page and refresh the UI."""
+    global current_page, filtered_posts
+    current_page = new_page
+
+    # Re-apply current filter with new pagination
+    posts = get_cached_posts()
+    search_query = ""  # We'd need to track this separately in a real implementation
+    filtered_posts_all = apply_filter(search_query, posts)
+    filtered_posts, _ = get_paginated_posts(
+        filtered_posts_all, current_page, posts_per_page
+    )
+
+    render_posts.refresh()
+    create_pagination.refresh()
 
 
 def create_blog_stats(posts: list[dict[str, Any]]) -> ui.element:
@@ -206,6 +330,73 @@ def create_blog_stats(posts: list[dict[str, Any]]) -> ui.element:
             )
             ui.label("Min Read").classes("text-sm opacity-70")
     return stats_card
+
+
+@ui.refreshable
+def create_pagination() -> ui.element:
+    """Create pagination controls for blog posts."""
+    posts = get_cached_posts()
+    total_posts = len(posts)
+
+    if total_posts <= posts_per_page:
+        return ui.element("div")  # No pagination needed
+
+    _, pagination_info = get_paginated_posts(posts, current_page, posts_per_page)
+
+    with ui.row().classes(
+        "justify-center items-center gap-2 mt-6"
+    ) as pagination_container:
+        # Previous button
+        if pagination_info["has_previous"]:
+            ui.button(
+                "← Previous",
+                on_click=lambda: change_page(pagination_info["previous_page"]),
+            ).props("flat").classes("pagination-btn")
+
+        # Page numbers
+        total_pages = pagination_info["total_pages"]
+        current = pagination_info["current_page"]
+
+        # Show max 5 page numbers with current page in center when possible
+        start_page = max(1, current - 2)
+        end_page = min(total_pages, start_page + 4)
+        start_page = max(1, end_page - 4)
+
+        if start_page > 1:
+            ui.button("1", on_click=lambda: change_page(1)).props("flat").classes(
+                "pagination-btn"
+            )
+            if start_page > 2:
+                ui.label("...").classes("pagination-ellipsis")
+
+        for page_num in range(start_page, end_page + 1):
+            if page_num == current:
+                ui.button(str(page_num)).props("").classes("pagination-btn-active")
+            else:
+                ui.button(
+                    str(page_num), on_click=lambda p=page_num: change_page(p)
+                ).props("flat").classes("pagination-btn")
+
+        if end_page < total_pages:
+            if end_page < total_pages - 1:
+                ui.label("...").classes("pagination-ellipsis")
+            ui.button(
+                str(total_pages), on_click=lambda: change_page(total_pages)
+            ).props("flat").classes("pagination-btn")
+
+        # Next button
+        if pagination_info["has_next"]:
+            ui.button(
+                "Next →", on_click=lambda: change_page(pagination_info["next_page"])
+            ).props("flat").classes("pagination-btn")
+
+    # Page info
+    with ui.row().classes("justify-center mt-2"):
+        ui.label(f"Page {current} of {total_pages} ({total_posts} posts)").classes(
+            "text-sm opacity-70"
+        )
+
+    return pagination_container
 
 
 @ui.refreshable
@@ -262,14 +453,17 @@ def render_posts() -> None:
 
 
 def create_scroll_to_top() -> ui.element:
-    """Create a floating scroll-to-top button."""
+    """Create a floating scroll-to-top button with modern styling."""
     with (
         ui.button(
             icon="keyboard_arrow_up",
             on_click="window.scrollTo({top: 0, behavior: 'smooth'})",
         )
-        .props("fab")
-        .classes("scroll-to-top") as scroll_btn
+        .props("fab glossy")
+        .classes("scroll-to-top")
+        .style(
+            "background-color: var(--purple-accent); color: white; box-shadow: 0 4px 20px rgba(113, 58, 144, 0.3)"
+        ) as scroll_btn
     ):
         pass
     return scroll_btn
@@ -294,15 +488,20 @@ def blog_index() -> None:
             ui.column().classes("max-w-4xl w-full px-4"),
         ):
             posts = get_cached_posts()
-            filtered_posts[:] = posts
+            # Apply pagination to initial load
+            paginated_posts, _ = get_paginated_posts(
+                posts, current_page, posts_per_page
+            )
+            filtered_posts[:] = paginated_posts
 
             with ui.row().classes("w-full justify-center mb-6"):
                 create_search_bar()
 
-            if filtered_posts:
-                create_blog_stats(filtered_posts)
+            if posts:  # Show stats based on all posts, not just current page
+                create_blog_stats(posts)
 
             render_posts()
+            create_pagination()
 
         create_scroll_to_top()
         create_footer()

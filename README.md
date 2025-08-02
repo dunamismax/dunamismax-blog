@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="https://github.com/dunamismax/nicegui-blog">
-    <img src="https://readme-typing-svg.demolab.com/?font=Inter&weight=600&size=26&pause=800&color=713A90&center=true&vCenter=true&width=1200&height=80&lines=Dark+Theme+NiceGUI+Blog+Application;Python+3.13+%2B+NiceGUI+2.22.1;Purple+%26+Orange+Aesthetic+Design;Lightning+Fast+TTL+Cached+Content;Precomputed+Word+Count+%26+Read+Time;Real+Time+Search+%26+Statistics;File+Based+Content+Management;Zero+Database+Dependencies;Standalone+Executable+Distribution;MIT+Licensed+Open+Source" alt="Typing SVG" />
+    <img src="https://readme-typing-svg.demolab.com/?font=Inter&weight=600&size=26&pause=800&color=713A90&center=true&vCenter=true&width=1200&height=80&lines=Dark+Theme+NiceGUI+Blog+Application;Python+3.13+%2B+NiceGUI+2.22.1;Purple+%26+Orange+Aesthetic+Design;Lightning+Fast+TTL+Cached+Content;Real+Time+Search+%26+Pagination;Image+Optimization+%26+Lazy+Loading;File+Based+Content+Management;Zero+Database+Dependencies;Standalone+Executable+Distribution;MIT+Licensed+Open+Source" alt="Typing SVG" />
   </a>
 </p>
 
@@ -62,8 +62,13 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
   <img src="https://github.com/dunamismax/images/blob/main/python/Repo-Features.png" alt="Repository Features" width="400" />
 </p>
 
-* Built-in HTML sanitization to prevent XSS
-* Token-protected admin cache management endpoint
+* **Enhanced Search & Pagination**: Real-time search with smart pagination (5 posts per page)
+* **Image Optimization**: Lazy loading, responsive images with hover effects
+* **Modern Header Design**: Gradient background, feature badges, improved typography
+* **Comprehensive Favicon Support**: All device formats with proper meta tags
+* **Advanced Styling**: Custom scrollbars, smooth animations, enhanced hover effects
+* **Built-in HTML sanitization** to prevent XSS
+* **Token-protected admin cache management** endpoint
 
 ## Project Structure
 
@@ -75,8 +80,9 @@ nicegui-blog/
 ├── content/                 # Blog content
 │   └── posts/               # Markdown blog posts with front matter
 ├── static/                  # Static assets
-│   ├── blog.css            # Global styles
-│   └── syntax.css          # Auto-generated Pygments styling
+│   ├── blog.css            # Global styles with modern enhancements
+│   ├── syntax.css          # Auto-generated Pygments styling
+│   └── favicon/            # Comprehensive favicon collection
 ├── tests/                   # Test suite
 ├── build.py                 # PyInstaller build script
 └── pyproject.toml           # Modern Python project configuration
@@ -127,7 +133,7 @@ uv run python app/main.py
 <table>
 <tr>
 <td><code>/blog</code></td>
-<td>Main blog index with dark theme, search, and statistics</td>
+<td>Main blog index with modern header, search, pagination, and statistics</td>
 <td><img src="https://img.shields.io/badge/-Main-713A90?style=flat" alt="Main"></td>
 </tr>
 <tr>
@@ -164,12 +170,14 @@ Full markdown support with:
 - Custom fences and diagrams
 ```
 
-### Supported Features
+### Enhanced Content Features
 
-- **Multi-Format Dates**: ISO, YYYY-MM-DD, natural language formats
-- **Advanced Markdown**: Tables, task lists, syntax highlighting, TOC generation
-- **Auto-Generation**: Titles from filenames, dates from file modification time
-- **Error Recovery**: Graceful handling of malformed content
+* **Multi-Format Dates**: ISO, YYYY-MM-DD, natural language formats
+* **Advanced Markdown**: Tables, task lists, syntax highlighting, TOC generation
+* **Image Optimization**: Automatic lazy loading, responsive scaling, hover effects
+* **Auto-Generation**: Titles from filenames, dates from file modification time
+* **Error Recovery**: Graceful handling of malformed content
+* **SEO Optimization**: Comprehensive meta tags, Open Graph, Twitter Cards
 
 ## Build System & Commands
 
@@ -253,40 +261,44 @@ ps aux | grep nicegui-blog
 
 **User Experience**
 
-- Stunning dark theme UI
-- Purple color scheme
-- Lightning-fast performance
-- Real-time search functionality
-- Interactive blog statistics
-- Precomputed word counts & read times
-- Smart content tagging
-- Mobile-first responsive design
+* Stunning dark theme UI with gradient header
+* Purple & orange color scheme
+* Lightning-fast performance (sub-100ms cached)
+* Real-time search with smart pagination
+* Interactive blog statistics
+* Precomputed word counts & read times
+* Smart content tagging
+* Mobile-first responsive design
+* Lazy-loaded optimized images
+* Smooth scroll animations
 
 </td>
 <td width="33%">
 
 **Developer Experience**
 
-- Built-in security validation
-- Full TypeScript-style hints
-- Modern async/await patterns
-- Hot reloading development
-- Single executable builds
-- Automated code formatting
-- Comprehensive error handling
+* Built-in security validation
+* Full TypeScript-style hints
+* Modern async/await patterns
+* Hot reloading development
+* Single executable builds
+* Automated code formatting
+* Comprehensive error handling
 
 </td>
 <td width="33%">
 
 **Architecture**
 
-- Modular component design
-- Intelligent caching system
-- XSS prevention & validation
-- Performance monitoring
-- SEO-friendly URLs
-- Zero database dependencies
-- Cross-platform distribution
+* Modular component design with @ui.refreshable
+* Intelligent multi-layer TTL caching
+* XSS prevention & HTML sanitization
+* Performance monitoring with metrics
+* SEO-friendly URLs & comprehensive meta tags
+* Zero database dependencies
+* Cross-platform distribution
+* Pagination for scalable content
+* Image optimization pipeline
 
 </td>
 </tr>

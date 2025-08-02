@@ -15,6 +15,21 @@ import markdown
 logger = logging.getLogger(__name__)
 
 
+def optimize_image_references(html_content: str) -> str:
+    """Optimize image references in HTML content for better performance."""
+    # Add loading="lazy" to all images for performance
+    html_content = re.sub(
+        r"<img([^>]*?)>", r'<img\1 loading="lazy" decoding="async">', html_content
+    )
+
+    # Add responsive image classes
+    html_content = re.sub(
+        r"<img([^>]*?)>", r'<img\1 class="responsive-image">', html_content
+    )
+
+    return html_content
+
+
 def create_slug(filename: str) -> str:
     """Create a URL-friendly slug from a filename."""
     if not filename or not isinstance(filename, str):
@@ -325,13 +340,16 @@ def get_post_by_slug(slug: str) -> dict[str, Any] | None:
         )
         allowed_attributes = {
             **bleach.sanitizer.ALLOWED_ATTRIBUTES,
-            "img": ["src", "alt", "title"],
+            "img": ["src", "alt", "title", "loading", "decoding", "class"],
             "a": ["href", "title", "rel"],
             "*": ["class"],
         }
         html_content = bleach.clean(
             html_content, tags=allowed_tags, attributes=allowed_attributes
         )
+
+        # Optimize image references for performance
+        html_content = optimize_image_references(html_content)
 
         # Validate and process metadata using new validation function
         metadata = validate_post_metadata(post.metadata or {}, matching_file.name)

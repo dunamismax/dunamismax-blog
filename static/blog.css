@@ -32,6 +32,45 @@
             color: var(--text-primary);
         }
 
+        /* Modern header styling */
+        .bg-gradient-header {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, rgba(113, 58, 144, 0.1) 50%, var(--dark-bg) 100%);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .modern-blog-header {
+            text-align: center;
+        }
+
+        .modern-blog-header a {
+            color: var(--purple-accent);
+            text-decoration: none;
+        }
+
+        .modern-blog-header a:hover {
+            color: var(--orange-accent);
+            transform: translateY(-2px);
+        }
+
+        .text-purple-accent {
+            color: var(--purple-accent) !important;
+        }
+
+        /* Badge styling */
+        .q-badge {
+            background-color: var(--purple-accent) !important;
+            color: white !important;
+            border-radius: 1rem !important;
+            font-size: 0.875rem !important;
+            font-weight: 500 !important;
+        }
+
+        .q-badge[color="orange"] {
+            background-color: var(--orange-accent) !important;
+        }
+
+        /* Legacy support for old blog-header class */
         .blog-header {
             text-align: center;
             margin-bottom: 2rem;
@@ -124,10 +163,26 @@
             color: var(--purple-accent);
         }
 
-        .prose img {
+        .prose img, .responsive-image {
             border-radius: 0.5rem;
             max-width: 100%;
             height: auto;
+            transition: transform 0.2s ease;
+        }
+
+        .responsive-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(113, 58, 144, 0.2);
+        }
+
+        /* Image optimization */
+        img[loading="lazy"] {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        img[loading="lazy"].loaded {
+            opacity: 1;
         }
 
         .scroll-to-top {
@@ -135,12 +190,69 @@
             bottom: 2rem;
             right: 2rem;
             z-index: 1000;
-            transition: opacity 0.3s ease;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .scroll-to-top:hover {
+            background-color: var(--orange-accent) !important;
+            transform: scale(1.1) !important;
         }
 
         .search-container {
             position: relative;
             margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Hide problematic Quasar field control elements */
+        .modern-search-input .q-field__control.relative-position.row.no-wrap {
+            display: none !important;
+        }
+
+        /* Style the modern search input */
+        .modern-search-input {
+            background-color: var(--card-bg) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 0.75rem !important;
+            padding: 0.75rem 1rem !important;
+            font-family: var(--pico-font-family) !important;
+            font-size: var(--pico-font-size) !important;
+            color: var(--text-primary) !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .modern-search-input:focus {
+            border-color: var(--purple-accent) !important;
+            box-shadow: 0 0 0 2px rgba(113, 58, 144, 0.2) !important;
+            outline: none !important;
+        }
+
+        .modern-search-input input {
+            background: transparent !important;
+            border: none !important;
+            outline: none !important;
+            color: var(--text-primary) !important;
+            font-family: var(--pico-font-family) !important;
+        }
+
+        .modern-search-input input::placeholder {
+            color: var(--text-secondary) !important;
+            opacity: 0.7 !important;
+        }
+
+        /* Search icon styling */
+        .modern-search-input .q-icon {
+            color: var(--purple-accent) !important;
+            margin-right: 0.5rem !important;
         }
 
         .blog-stats {
@@ -188,19 +300,155 @@
             background-color: var(--orange-accent) !important;
         }
 
+        /* Pagination styling */
+        .pagination-btn {
+            background-color: transparent !important;
+            color: var(--text-primary) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 0.5rem !important;
+            padding: 0.5rem 1rem !important;
+            margin: 0 0.125rem !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .pagination-btn:hover {
+            background-color: var(--purple-accent) !important;
+            color: white !important;
+            border-color: var(--purple-accent) !important;
+        }
+
+        .pagination-btn-active {
+            background-color: var(--purple-accent) !important;
+            color: white !important;
+            border: 1px solid var(--purple-accent) !important;
+            border-radius: 0.5rem !important;
+            padding: 0.5rem 1rem !important;
+            margin: 0 0.125rem !important;
+        }
+
+        .pagination-ellipsis {
+            color: var(--text-secondary) !important;
+            padding: 0.5rem 0.5rem !important;
+            margin: 0 0.125rem !important;
+        }
+
         /* Footer styling */
         footer {
             border-top: 1px solid var(--border-color) !important;
             color: var(--text-secondary);
         }
 
+        /* Additional style improvements */
+        .blog-post-card {
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(113, 58, 144, 0.05) 100%);
+            backdrop-filter: blur(10px);
+        }
+
+        .blog-post-card:hover {
+            transform: translateY(-2px);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* Enhanced scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--purple-accent);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--orange-accent);
+        }
+
+        /* Smooth animations */
+        * {
+            scroll-behavior: smooth;
+        }
+
+        /* Enhanced code blocks */
+        .blog-content pre, .highlight {
+            position: relative;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .blog-content pre:hover, .highlight:hover {
+            box-shadow: 0 4px 20px rgba(113, 58, 144, 0.15);
+        }
+
+        /* Link hover effects */
+        .blog-content a {
+            position: relative;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom-color 0.2s ease;
+        }
+
+        .blog-content a:hover {
+            border-bottom-color: var(--orange-accent);
+        }
+
+        /* Enhanced buttons */
+        .q-btn {
+            font-weight: 500 !important;
+            letter-spacing: 0.025em !important;
+        }
+
+        /* Loading states */
+        .loading-shimmer {
+            background: linear-gradient(90deg, transparent 25%, rgba(113, 58, 144, 0.1) 50%, transparent 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Selection styling */
+        ::selection {
+            background-color: var(--purple-accent);
+            color: white;
+        }
+
+        ::-moz-selection {
+            background-color: var(--purple-accent);
+            color: white;
+        }
+
         @media (max-width: 768px) {
-            .blog-header {
-                margin-bottom: 1rem;
+            .modern-blog-header {
+                padding: 1rem;
+            }
+
+            .modern-blog-header .text-4xl {
+                font-size: 2rem !important;
+            }
+
+            .modern-blog-header .text-xl {
+                font-size: 1.125rem !important;
             }
 
             .scroll-to-top {
                 bottom: 1rem;
                 right: 1rem;
+            }
+
+            .pagination-btn, .pagination-btn-active {
+                padding: 0.375rem 0.75rem !important;
+                font-size: 0.875rem !important;
+            }
+
+            .search-container {
+                max-width: 100% !important;
+                padding: 0 1rem;
             }
         }
