@@ -228,18 +228,20 @@
 
         .search-container {
             position: relative;
-            margin-bottom: 2rem;
+            margin-bottom: 0;
             display: flex;
             align-items: center;
             justify-content: center;
+            max-width: 16rem;
+            width: 100%;
         }
 
         /* Style the modern search input */
         .modern-search-input {
             background-color: var(--card-bg) !important;
             border: 1px solid var(--border-color) !important;
-            border-radius: 0.75rem !important;
-            padding: 0.75rem 1rem !important;
+            border-radius: 0.5rem !important;
+            padding: 0.25rem 0.5rem !important;
             font-family: var(--pico-font-family) !important;
             font-size: var(--pico-font-size) !important;
             color: var(--text-primary) !important;
@@ -249,8 +251,8 @@
         .modern-search-input:focus {
             border-color: var(--purple-accent) !important;
             box-shadow: 0 0 0 2px rgba(113, 58, 144, 0.2) !important;
-            border-radius: 0.75rem !important;
-            padding: 0.75rem 1rem !important;
+            border-radius: 0.5rem !important;
+            padding: 0.25rem 0.5rem !important;
             outline: none !important;
         }
 
@@ -271,7 +273,7 @@
         .modern-search-input .q-field__control,
         .modern-search-input .q-field__control::before,
         .modern-search-input .q-field__control::after {
-            border-radius: 0.75rem !important;
+            border-radius: 0.5rem !important;
         }
 
         .modern-search-input .q-field__control {
@@ -281,7 +283,36 @@
         /* Search icon styling */
         .modern-search-input .q-icon {
             color: var(--purple-accent) !important;
-            margin-right: 0.5rem !important;
+            margin-right: 0.25rem !important;
+        }
+
+        .menu-expansion {
+            max-width: 16rem;
+            width: 100%;
+            margin-bottom: 0;
+        }
+
+        .menu-header {
+            background-color: var(--card-bg) !important;
+            border: 1px solid var(--orange-accent) !important;
+            border-radius: 0.5rem !important;
+            color: var(--orange-accent) !important;
+            padding: 0.25rem 0.5rem !important;
+        }
+
+        .menu-header .q-icon {
+            color: var(--orange-accent) !important;
+        }
+
+        .menu-expansion .blog-stats {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 600px) {
+            .search-container,
+            .menu-expansion {
+                max-width: 100%;
+            }
         }
 
         .blog-stats {

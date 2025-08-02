@@ -220,14 +220,14 @@ def create_footer() -> ui.element:
 
 @ui.refreshable
 def create_search_bar() -> ui.element:
-    """Create a modern search bar component with reactive filtering."""
-    with ui.row().classes("search-container w-full max-w-md") as search_container:
+    """Create a compact search bar component with reactive filtering."""
+    with ui.row().classes("search-container") as search_container:
         search_input = (
             ui.input(
                 placeholder="Search posts...", on_change=lambda e: filter_posts(e.value)
             )
             .props("borderless dense standout")
-            .classes("modern-search-input flex-grow")
+            .classes("modern-search-input w-full")
         )
         search_input.props("prepend-icon=search")
     return search_container
@@ -300,9 +300,16 @@ def update_tag_filter(selected: set[str]) -> None:
     create_pagination.refresh()
 
 
-def open_tags_dialog(tags: list[str]) -> None:
-    """Display a dialog with all tags and apply selection."""
+async def open_tags_dialog(tags: list[str]) -> None:
+    """Display a dialog with all tags and apply selection without scroll jank."""
+    scroll_pos = await ui.run_javascript("window.scrollY", timeout=1)
     dialog = ui.dialog()
+
+    async def restore_scroll() -> None:
+        await ui.run_javascript(f"window.scrollTo(0, {scroll_pos})")
+
+    dialog.on("hide", restore_scroll)
+
     selected = set(active_tags)
     with dialog, ui.card().classes("p-4 min-w-[250px]"):
         ui.label("Filter by Tags").classes("text-lg font-bold mb-2")
@@ -320,9 +327,16 @@ def open_tags_dialog(tags: list[str]) -> None:
     dialog.open()
 
 
-def open_bookmarks_dialog() -> None:
-    """Display a dialog with bookmarked posts from local storage."""
+async def open_bookmarks_dialog() -> None:
+    """Display a dialog with bookmarked posts from local storage without scroll jank."""
+    scroll_pos = await ui.run_javascript("window.scrollY", timeout=1)
     dialog = ui.dialog()
+
+    async def restore_scroll() -> None:
+        await ui.run_javascript(f"window.scrollTo(0, {scroll_pos})")
+
+    dialog.on("hide", restore_scroll)
+
     with dialog, ui.card().classes("p-4 min-w-[250px]"):
         ui.label("Bookmarked Posts").classes("text-lg font-bold mb-2")
         container = ui.column().classes("gap-2")
@@ -336,15 +350,16 @@ def open_bookmarks_dialog() -> None:
         posts = get_cached_posts()
         bookmark_posts = [p for p in posts if p["slug"] in slugs]
         container.clear()
-        if bookmark_posts:
-            for p in bookmark_posts:
-                ui.link(
-                    p.get("title", "Untitled"),
-                    f"/blog/{p['slug']}",
-                    new_tab=False,
-                ).classes("no-underline")
-        else:
-            ui.label("No bookmarks yet").classes("opacity-70")
+        with container:
+            if bookmark_posts:
+                for p in bookmark_posts:
+                    ui.link(
+                        p.get("title", "Untitled"),
+                        f"/blog/{p['slug']}",
+                        new_tab=False,
+                    ).classes("no-underline")
+            else:
+                ui.label("No bookmarks yet").classes("opacity-70")
 
     dialog.open()
     ui.timer(0.1, populate, once=True)
@@ -398,7 +413,7 @@ def change_page(new_page: int) -> None:
 def create_blog_stats(posts: list[dict[str, Any]]) -> ui.element:
     """Create a stats card showing blog metrics."""
     with (
-        ui.card().classes("blog-stats w-full max-w-md") as stats_card,
+        ui.card().classes("blog-stats w-full") as stats_card,
         ui.row().classes("justify-around items-center"),
     ):
         with ui.column().classes("items-center"):
@@ -424,36 +439,41 @@ def create_blog_stats(posts: list[dict[str, Any]]) -> ui.element:
 
 
 def create_meta_cards(posts: list[dict[str, Any]]) -> ui.element:
-    """Create a row of meta cards for stats, tags, and bookmarks."""
+    """Create a collapsible menu with stats, tags, and bookmarks."""
     unique_tags = sorted({tag for post in posts for tag in post.get("tags", [])})
-    with ui.row().classes("w-full justify-center gap-4 mb-6") as meta_row:
-        create_blog_stats(posts)
+    with (
+        ui.expansion("Menu", icon="menu")
+        .classes("menu-expansion")
+        .props("header-class=menu-header") as expansion
+    ):
+        with ui.column().classes("gap-4 mt-2 w-full"):
+            create_blog_stats(posts)
 
-        with (
-            ui.card().classes(
-                "blog-stats w-full max-w-md cursor-pointer",
-            ) as tags_card,
-            ui.column().classes("items-center"),
-        ):
-            ui.label(str(len(unique_tags))).classes("text-2xl font-bold").style(
-                "color: var(--purple-accent)"
-            )
-            ui.label("Tags").classes("text-sm opacity-70")
-        tags_card.on("click", lambda: open_tags_dialog(unique_tags))
+            with (
+                ui.card().classes(
+                    "blog-stats cursor-pointer w-full",
+                ) as tags_card,
+                ui.column().classes("items-center"),
+            ):
+                ui.label(str(len(unique_tags))).classes("text-2xl font-bold").style(
+                    "color: var(--purple-accent)"
+                )
+                ui.label("Tags").classes("text-sm opacity-70")
+            tags_card.on("click", lambda: ui.run_async(open_tags_dialog(unique_tags)))
 
-        with (
-            ui.card().classes(
-                "blog-stats w-full max-w-md cursor-pointer",
-            ) as bookmarks_card,
-            ui.column().classes("items-center"),
-        ):
-            bookmark_count = (
-                ui.label("0")
-                .classes("text-2xl font-bold")
-                .style("color: var(--orange-accent)")
-            )
-            ui.label("Bookmarks").classes("text-sm opacity-70")
-        bookmarks_card.on("click", open_bookmarks_dialog)
+            with (
+                ui.card().classes(
+                    "blog-stats cursor-pointer w-full",
+                ) as bookmarks_card,
+                ui.column().classes("items-center"),
+            ):
+                bookmark_count = (
+                    ui.label("0")
+                    .classes("text-2xl font-bold")
+                    .style("color: var(--orange-accent)")
+                )
+                ui.label("Bookmarks").classes("text-sm opacity-70")
+            bookmarks_card.on("click", lambda: ui.run_async(open_bookmarks_dialog()))
 
         async def set_bookmark_count() -> None:
             count = await ui.run_javascript(
@@ -463,7 +483,7 @@ def create_meta_cards(posts: list[dict[str, Any]]) -> ui.element:
             bookmark_count.text = str(count)
 
         ui.timer(0.1, set_bookmark_count, once=True)
-    return meta_row
+    return expansion
 
 
 @ui.refreshable
@@ -634,11 +654,12 @@ def blog_index(request: Request) -> None:
             )
             filtered_posts[:] = paginated_posts
 
-            with ui.row().classes("w-full justify-center mb-6"):
+            with ui.row().classes(
+                "w-full justify-center items-center gap-2 mb-6 flex-wrap"
+            ):
                 create_search_bar()
-
-            if posts:  # Show stats based on all posts, not just current page
-                create_meta_cards(posts)
+                if posts:  # Show stats based on all posts, not just current page
+                    create_meta_cards(posts)
 
             render_posts()
             create_pagination()
