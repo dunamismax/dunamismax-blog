@@ -3,10 +3,16 @@
 </p>
 
 <div align="center">
-<p
+
 # NiceGUI Blog
-</p>
+
 </div>
+
+<p align="center">
+  <a href="https://github.com/dunamismax/nicegui-blog">
+    <img src="https://readme-typing-svg.demolab.com/?font=Inter&weight=600&size=28&pause=1000&color=713A90&center=true&vCenter=true&width=1200&height=90&lines=Modern+Dark+Theme+Blog+Built+with+NiceGUI;Python+3.13+%2B+NiceGUI+v2.22.1+%2B+FastAPI;Beautiful+Purple+%26+Orange+Design+System;Lightning+Fast+TTL+Multi-Layer+Caching;Real-Time+Search+with+Smart+Pagination;Advanced+Image+Optimization+%26+Lazy+Loading;File-Based+Content+with+Zero+Dependencies;Production+Ready+Standalone+Executables;Comprehensive+Security+%26+XSS+Protection;Open+Source+MIT+Licensed+Framework" alt="Typing SVG" />
+  </a>
+</p>
 
 <div align="center">
 
@@ -29,12 +35,6 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
   <img src="https://github.com/dunamismax/images/blob/main/python/website-interaction-recording-high-quality.gif" alt="NiceGUI Blog Demo">
 </p>
 </details>
-
-<p align="center">
-  <a href="https://github.com/dunamismax/nicegui-blog">
-    <img src="https://readme-typing-svg.demolab.com/?font=Inter&weight=600&size=28&pause=1000&color=713A90&center=true&vCenter=true&width=1200&height=90&lines=Modern+Dark+Theme+Blog+Built+with+NiceGUI;Python+3.13+%2B+NiceGUI+v2.22.1+%2B+FastAPI;Beautiful+Purple+%26+Orange+Design+System;Lightning+Fast+TTL+Multi-Layer+Caching;Real-Time+Search+with+Smart+Pagination;Advanced+Image+Optimization+%26+Lazy+Loading;File-Based+Content+with+Zero+Dependencies;Production+Ready+Standalone+Executables;Comprehensive+Security+%26+XSS+Protection;Open+Source+MIT+Licensed+Framework" alt="Typing SVG" />
-  </a>
-</p>
 
 <p align="center">
   <a href="https://www.python.org/downloads/release/python-3130/"><img src="https://img.shields.io/badge/Python-3.13+-713A90.svg?logo=python&logoColor=white&style=for-the-badge" alt="Python Version"></a>
