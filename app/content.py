@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import re
 from datetime import datetime
 from pathlib import Path
@@ -16,10 +17,126 @@ if TYPE_CHECKING:
 
 def create_slug(filename: str) -> str:
     """Create a URL-friendly slug from a filename."""
+    if not filename or not isinstance(filename, str):
+        raise ValueError("Filename must be a non-empty string")
+
     name = Path(filename).stem
+    if not name:
+        raise ValueError("Filename must have a valid stem")
+
     slug = re.sub(r"[^\w\s-]", "", name.lower())
     slug = re.sub(r"[-\s]+", "-", slug)
-    return slug.strip("-")
+    slug = slug.strip("-")
+
+    if not slug:
+        raise ValueError("Generated slug is empty")
+
+    return slug
+
+
+def validate_post_metadata(metadata: dict[str, Any], filename: str) -> dict[str, Any]:
+    """Validate and sanitize post metadata."""
+    validated = metadata.copy()
+
+    # Ensure title exists and is safe
+    if not validated.get("title"):
+        validated["title"] = (
+            Path(filename).stem.replace("-", " ").replace("_", " ").title()
+        )
+    elif not isinstance(validated["title"], str):
+        validated["title"] = str(validated["title"])
+
+    # Sanitize title (remove potential XSS)
+    validated["title"] = re.sub(r'[<>"\']', "", validated["title"][:100])
+
+    # Validate summary
+    if validated.get("summary"):
+        if not isinstance(validated["summary"], str):
+            validated["summary"] = str(validated["summary"])
+        validated["summary"] = validated["summary"][:500]  # Limit length
+
+    # Validate tags
+    if validated.get("tags"):
+        if isinstance(validated["tags"], str):
+            validated["tags"] = [tag.strip() for tag in validated["tags"].split(",")]
+        elif isinstance(validated["tags"], list):
+            validated["tags"] = [str(tag).strip() for tag in validated["tags"]][
+                :10
+            ]  # Max 10 tags
+        else:
+            validated["tags"] = []
+
+    return validated
+
+
+async def load_post_async(md_file: Path) -> dict[str, Any] | None:
+    """Asynchronously load a single post file with comprehensive error handling."""
+    try:
+        if not md_file.is_file():
+            print(f"Skipping non-file: {md_file}")
+            return None
+
+        if md_file.stat().st_size == 0:
+            print(f"Skipping empty file: {md_file}")
+            return None
+
+        # Use asyncio for file I/O
+        loop = asyncio.get_event_loop()
+
+        def read_file():
+            with open(md_file, encoding="utf-8") as f:
+                return frontmatter.load(f)
+
+        post = await loop.run_in_executor(None, read_file)
+
+        # Validate and process metadata
+        metadata = validate_post_metadata(post.metadata, md_file.name)
+        metadata["slug"] = create_slug(md_file.name)
+        metadata["filename"] = md_file.name
+
+        # Parse date with enhanced error handling
+        if "date" in metadata:
+            metadata["date"] = parse_date(metadata["date"], md_file)
+        else:
+            metadata["date"] = datetime.fromtimestamp(md_file.stat().st_mtime)
+
+        return metadata
+
+    except Exception as e:
+        print(f"Error loading post {md_file}: {e}")
+        return None
+
+
+def parse_date(date_value: Any, md_file: Path) -> datetime:
+    """Parse date with multiple format support and comprehensive error handling."""
+    if isinstance(date_value, datetime):
+        return date_value
+
+    if isinstance(date_value, str):
+        try:
+            # Try ISO format first
+            return datetime.fromisoformat(date_value)
+        except ValueError:
+            # Try common date formats
+            for fmt in [
+                "%Y-%m-%d",
+                "%Y/%m/%d",
+                "%B %d, %Y",
+                "%d/%m/%Y",
+                "%m/%d/%Y",
+                "%Y-%m-%d %H:%M:%S",
+                "%m/%d/%Y",  # 8/1/2025 format
+            ]:
+                try:
+                    return datetime.strptime(date_value, fmt)
+                except ValueError:
+                    continue
+
+            print(f"Could not parse date '{date_value}' in {md_file}")
+            return datetime.fromtimestamp(md_file.stat().st_mtime)
+
+    print(f"Invalid date type in {md_file}: {type(date_value)}")
+    return datetime.fromtimestamp(md_file.stat().st_mtime)
 
 
 def get_all_posts() -> list[dict[str, Any]]:
@@ -58,51 +175,15 @@ def get_all_posts() -> list[dict[str, Any]]:
             with open(md_file, encoding="utf-8") as f:
                 post = frontmatter.load(f)
 
-            # Extract metadata with validation
-            metadata = post.metadata.copy()
+            # Validate and process metadata using new validation function
+            metadata = validate_post_metadata(post.metadata, md_file.name)
             metadata["slug"] = create_slug(md_file.name)
             metadata["filename"] = md_file.name
 
-            # Validate required fields
-            if not metadata.get("title"):
-                metadata["title"] = (
-                    md_file.stem.replace("-", " ").replace("_", " ").title()
-                )
-
-            # Parse date with multiple format support
+            # Parse date with enhanced error handling
             if "date" in metadata:
-                if isinstance(metadata["date"], str):
-                    try:
-                        # Try ISO format first
-                        metadata["date"] = datetime.fromisoformat(metadata["date"])
-                    except ValueError:
-                        try:
-                            # Try common date formats
-                            for fmt in [
-                                "%Y-%m-%d",
-                                "%Y/%m/%d",
-                                "%B %d, %Y",
-                                "%d/%m/%Y",
-                            ]:
-                                try:
-                                    metadata["date"] = datetime.strptime(
-                                        metadata["date"], fmt
-                                    )
-                                    break
-                                except ValueError:
-                                    continue
-                            else:
-                                print(
-                                    f"Could not parse date '{metadata['date']}' in {md_file}"
-                                )
-                                metadata["date"] = datetime.now()
-                        except Exception:
-                            metadata["date"] = datetime.now()
-                elif not isinstance(metadata["date"], datetime):
-                    print(f"Invalid date type in {md_file}: {type(metadata['date'])}")
-                    metadata["date"] = datetime.now()
+                metadata["date"] = parse_date(metadata["date"], md_file)
             else:
-                # Use file modification time as fallback
                 metadata["date"] = datetime.fromtimestamp(md_file.stat().st_mtime)
 
             posts.append(metadata)
@@ -247,48 +328,13 @@ def get_post_by_slug(slug: str) -> dict[str, Any] | None:
             print(f"Error converting markdown to HTML for {slug}: {e}")
             html_content = f"<p>Error processing content: {e}</p>"
 
-        # Process metadata with validation
-        metadata = post.metadata.copy() if post.metadata else {}
+        # Validate and process metadata using new validation function
+        metadata = validate_post_metadata(post.metadata or {}, matching_file.name)
 
-        # Ensure title exists
-        if not metadata.get("title"):
-            metadata["title"] = (
-                matching_file.stem.replace("-", " ").replace("_", " ").title()
-            )
-
-        # Parse date with multiple format support
+        # Parse date with enhanced error handling
         if "date" in metadata:
-            if isinstance(metadata["date"], str):
-                try:
-                    # Try ISO format first
-                    metadata["date"] = datetime.fromisoformat(metadata["date"])
-                except ValueError:
-                    try:
-                        # Try common date formats
-                        for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%B %d, %Y", "%d/%m/%Y"]:
-                            try:
-                                metadata["date"] = datetime.strptime(
-                                    metadata["date"], fmt
-                                )
-                                break
-                            except ValueError:
-                                continue
-                        else:
-                            print(
-                                f"Could not parse date '{metadata['date']}' in {matching_file}"
-                            )
-                            metadata["date"] = datetime.fromtimestamp(
-                                matching_file.stat().st_mtime
-                            )
-                    except Exception:
-                        metadata["date"] = datetime.fromtimestamp(
-                            matching_file.stat().st_mtime
-                        )
-            elif not isinstance(metadata["date"], datetime):
-                print(f"Invalid date type in {matching_file}: {type(metadata['date'])}")
-                metadata["date"] = datetime.fromtimestamp(matching_file.stat().st_mtime)
+            metadata["date"] = parse_date(metadata["date"], matching_file)
         else:
-            # Use file modification time as fallback
             metadata["date"] = datetime.fromtimestamp(matching_file.stat().st_mtime)
 
         result = {

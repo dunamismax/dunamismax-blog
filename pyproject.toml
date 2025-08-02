@@ -7,11 +7,12 @@ authors = [
 ]
 dependencies = [
     "nicegui>=2.22.1",
-    "markdown>=3.7.0",
+    "markdown>=3.8.0",
     "python-frontmatter>=1.1.0",
-    "pygments>=2.18.0",
+    "pygments>=2.19.0",
     "pymdown-extensions>=10.13.0",
     "pyinstaller>=6.14.2",
+    "cachetools>=5.5.0",
 ]
 requires-python = "~=3.13"
 readme = "README.md"
