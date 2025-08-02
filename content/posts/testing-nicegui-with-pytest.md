@@ -45,3 +45,4 @@ This pattern verifies that a route exists without spinning up a server.
 ## Continuous Confidence
 
 Automated tests free you to refactor boldly. Whether you're adding new widgets or changing markdown parsing, a quick `uv run pytest` confirms everything still works.
+

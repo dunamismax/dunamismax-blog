@@ -70,6 +70,16 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
 * **Built-in HTML sanitization** to prevent XSS
 * **Token-protected admin cache management** endpoint
 
+## Documentation
+
+- [NiceGUI Documentation](https://nicegui.io/docs/latest)
+- [Python 3.13 Docs](https://docs.python.org/3.13/)
+- [Pico.css Docs](https://picocss.com/docs/)
+- [uv Documentation](https://docs.astral.sh/uv/)
+- [Ruff Documentation](https://docs.astral.sh/ruff/)
+- [Cachetools TTLCache](https://cachetools.readthedocs.io/en/latest/#ttlcache)
+- [PyInstaller Documentation](https://pyinstaller.org/en/stable/)
+
 ## Project Structure
 
 ```sh

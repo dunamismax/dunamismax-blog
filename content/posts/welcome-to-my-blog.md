@@ -77,3 +77,4 @@ Open `http://localhost:8080` in your browser and you'll see the blog in action. 
 To adjust styles, edit `static/blog.css` or replace the accent colors. The dark palette makes code snippets pop, and Pico.css keeps the layout lightweight.
 
 Enjoy exploring NiceGUI and happy blogging!
+

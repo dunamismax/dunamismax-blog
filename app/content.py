@@ -17,18 +17,12 @@ logger = logging.getLogger(__name__)
 
 
 def optimize_image_references(html_content: str) -> str:
-    """Optimize image references in HTML content for better performance."""
-    # Add loading="lazy" to all images for performance
-    html_content = re.sub(
-        r"<img([^>]*?)>", r'<img\1 loading="lazy" decoding="async">', html_content
+    """Add lazy loading and responsive classes to images in HTML."""
+    return re.sub(
+        r"<img([^>]*?)>",
+        r'<img\1 loading="lazy" decoding="async" class="responsive-image">',
+        html_content,
     )
-
-    # Add responsive image classes
-    html_content = re.sub(
-        r"<img([^>]*?)>", r'<img\1 class="responsive-image">', html_content
-    )
-
-    return html_content
 
 
 def create_slug(filename: str) -> str:

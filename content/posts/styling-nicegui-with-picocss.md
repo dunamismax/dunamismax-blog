@@ -75,3 +75,4 @@ Reference the font in `blog.css` using `font-family: "Inter", sans-serif;` to ke
 Combine Pico's grid with NiceGUI rows and columns to support phones and tablets. Use media queries in `blog.css` to tweak padding or font sizes for smaller screens.
 
 Import the stylesheet once and enjoy consistent styling across pages.
+

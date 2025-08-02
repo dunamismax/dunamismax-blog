@@ -38,3 +38,4 @@ Dependencies are managed with **uv**, and code quality stays sharp thanks to **R
 ## Putting It All Together
 
 This combination of modern Python tooling and a minimalist UI framework makes the blog quick to maintain and easy to extend. Drop a Markdown file into `content/posts`, run `uv run python app/main.py`, and the stack does the rest.
+
