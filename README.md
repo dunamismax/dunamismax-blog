@@ -10,15 +10,15 @@
 
 <p align="center">
   <a href="https://www.python.org/downloads/release/python-3130/"><img src="https://img.shields.io/badge/Python-3.13+-713A90.svg?logo=python&logoColor=white&style=for-the-badge" alt="Python Version"></a>
-  <a href="https://nicegui.io/"><img src="https://img.shields.io/badge/NiceGUI-v2.22.1-D77757.svg?logo=fastapi&logoColor=white&style=for-the-badge" alt="NiceGUI Version"></a>
+  <a href="https://nicegui.io/"><img src="https://img.shields.io/badge/NiceGUI-v2.22.1-713A90.svg?logo=fastapi&logoColor=white&style=for-the-badge" alt="NiceGUI Version"></a>
   <a href="https://docs.astral.sh/uv/"><img src="https://img.shields.io/badge/uv-Package_Manager-713A90.svg?style=for-the-badge" alt="uv Package Manager"></a>
-  <a href="https://pyinstaller.org/"><img src="https://img.shields.io/badge/PyInstaller-v6.14.2-D77757.svg?style=for-the-badge" alt="PyInstaller"></a>
+  <a href="https://pyinstaller.org/"><img src="https://img.shields.io/badge/PyInstaller-v6.14.2-713A90.svg?style=for-the-badge" alt="PyInstaller"></a>
 </p>
 
 <p align="center">
   <a href="https://docs.astral.sh/ruff/"><img src="https://img.shields.io/badge/Ruff-Formatted-713A90.svg?style=for-the-badge" alt="Ruff Formatting"></a>
-  <a href="https://pygments.org/"><img src="https://img.shields.io/badge/Pygments-Dark_Theme-D77757.svg?style=for-the-badge" alt="Pygments"></a>
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-1E1E2E.svg?style=for-the-badge" alt="MIT License"></a>
+  <a href="https://pygments.org/"><img src="https://img.shields.io/badge/Pygments-Dark_Theme-713A90.svg?style=for-the-badge" alt="Pygments"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-713A90.svg?style=for-the-badge" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/Theme-Dark_Mode-713A90.svg?style=for-the-badge" alt="Dark Theme">
 </p>
 
@@ -44,11 +44,11 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
 <sub><b>Latest Python Performance</b></sub>
 </td>
 <td align="center" width="25%">
-<img src="https://img.shields.io/badge/-Dark_Theme-1E1E2E?style=for-the-badge&logo=moon&logoColor=white" alt="Dark Theme"><br>
+<img src="https://img.shields.io/badge/-Dark_Theme-713A90?style=for-the-badge&logo=moon&logoColor=white" alt="Dark Theme"><br>
 <sub><b>Beautiful Dark UI</b></sub>
 </td>
 <td align="center" width="25%">
-<img src="https://img.shields.io/badge/-File_Based-D77757?style=for-the-badge&logo=markdown&logoColor=white" alt="File Based"><br>
+<img src="https://img.shields.io/badge/-File_Based-713A90?style=for-the-badge&logo=markdown&logoColor=white" alt="File Based"><br>
 <sub><b>Zero Dependencies</b></sub>
 </td>
 <td align="center" width="25%">
@@ -106,7 +106,7 @@ uv run python app/main.py
 **Application available at** `http://localhost:8080`
 
 <img src="https://img.shields.io/badge/Status-Ready_to_Run-713A90?style=for-the-badge" alt="Ready">
-<img src="https://img.shields.io/badge/Performance-Lightning_Fast-D77757?style=for-the-badge" alt="Fast">
+<img src="https://img.shields.io/badge/Performance-Lightning_Fast-713A90?style=for-the-badge" alt="Fast">
 
 </div>
 
@@ -121,12 +121,12 @@ uv run python app/main.py
 <tr>
 <td><code>/blog/&lt;slug&gt;</code></td>
 <td>Individual blog posts with beautiful typography</td>
-<td><img src="https://img.shields.io/badge/-Posts-D77757?style=flat" alt="Posts"></td>
+<td><img src="https://img.shields.io/badge/-Posts-713A90?style=flat" alt="Posts"></td>
 </tr>
 <tr>
 <td><code>/admin/cache</code></td>
 <td>Cache management interface</td>
-<td><img src="https://img.shields.io/badge/-Admin-1E1E2E?style=flat" alt="Admin"></td>
+<td><img src="https://img.shields.io/badge/-Admin-713A90?style=flat" alt="Admin"></td>
 </tr>
 </table>
 
@@ -212,8 +212,8 @@ ps aux | grep nicegui-blog
 <sub>Modern Python UI with dark theme support</sub>
 </td>
 <td align="center">
-<img src="https://img.shields.io/badge/Styling-Pico.css_+_Custom-D77757?style=for-the-badge&logo=css3" alt="Styling"><br>
-<sub>18pt Inter font with purple/orange accents</sub>
+<img src="https://img.shields.io/badge/Styling-Pico.css_+_Custom-713A90?style=for-the-badge&logo=css3" alt="Styling"><br>
+<sub>18pt Inter font with purple accents</sub>
 </td>
 </tr>
 <tr>
@@ -222,7 +222,7 @@ ps aux | grep nicegui-blog
 <sub>Advanced markdown with syntax highlighting</sub>
 </td>
 <td align="center">
-<img src="https://img.shields.io/badge/Performance-Sub_100ms-D77757?style=for-the-badge&logo=lightning" alt="Performance"><br>
+<img src="https://img.shields.io/badge/Performance-Sub_100ms-713A90?style=for-the-badge&logo=lightning" alt="Performance"><br>
 <sub>Multi-layer caching with async processing</sub>
 </td>
 </tr>
@@ -239,7 +239,7 @@ ps aux | grep nicegui-blog
 **User Experience**
 
 - Stunning dark theme UI
-- Purple & orange color scheme  
+- Purple color scheme  
 - Lightning-fast performance
 - Real-time search functionality
 - Interactive blog statistics
@@ -299,9 +299,9 @@ ps aux | grep nicegui-blog
 
 <p align="center">
   <a href="https://twitter.com/dunamismax" target="_blank"><img src="https://img.shields.io/badge/Twitter-713A90.svg?&style=for-the-badge&logo=twitter&logoColor=white" alt="Twitter"></a>
-  <a href="https://bsky.app/profile/dunamismax.bsky.social" target="_blank"><img src="https://img.shields.io/badge/Bluesky-D77757?style=for-the-badge&logo=bluesky&logoColor=white" alt="Bluesky"></a>
+  <a href="https://bsky.app/profile/dunamismax.bsky.social" target="_blank"><img src="https://img.shields.io/badge/Bluesky-713A90?style=for-the-badge&logo=bluesky&logoColor=white" alt="Bluesky"></a>
   <a href="https://reddit.com/user/dunamismax" target="_blank"><img src="https://img.shields.io/badge/Reddit-713A90.svg?&style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit"></a>
-  <a href="https://discord.com/users/dunamismax" target="_blank"><img src="https://img.shields.io/badge/Discord-D77757.svg?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
+  <a href="https://discord.com/users/dunamismax" target="_blank"><img src="https://img.shields.io/badge/Discord-713A90.svg?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
   <a href="https://signal.me/#p/+dunamismax.66" target="_blank"><img src="https://img.shields.io/badge/Signal-713A90.svg?style=for-the-badge&logo=signal&logoColor=white" alt="Signal"></a>
 </p>
 
@@ -309,5 +309,5 @@ ps aux | grep nicegui-blog
 
 <p align="center">
   <strong style="color: #713A90; font-size: 18px;">NiceGUI Dark Blog</strong><br>
-  <sub style="color: #D77757;">Python 3.13 • Dark Theme • Beautiful UI • Lightning Fast • Zero Dependencies • Production Ready</sub>
+  <sub style="color: #713A90;">Python 3.13 • Dark Theme • Beautiful UI • Lightning Fast • Zero Dependencies • Production Ready</sub>
 </p>
