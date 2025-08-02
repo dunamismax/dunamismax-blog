@@ -1,8 +1,8 @@
-# Project Instructions for NiceGUI Dark Blog
+# Project Instructions for NiceGUI Blog
 
 ## Overview
 
-- **Project**: NiceGUI Dark Blog
+- **Project**: NiceGUI Blog
 - **Version**: 1.0.0
 - **Theme**: dark layout with purple accents
 - **Architecture**: file-based content, no database, standalone executable

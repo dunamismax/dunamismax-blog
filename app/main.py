@@ -120,11 +120,11 @@ def add_global_styles() -> None:
 
         <!-- Open Graph / Social Media -->
         <meta property=\"og:type\" content=\"website\">
-        <meta property=\"og:title\" content=\"NiceGUI Dark Blog - Modern Python Blog\">
+        <meta property=\"og:title\" content=\"NiceGUI Blog - Modern Python Blog\">
         <meta property=\"og:description\" content=\"A lightning-fast blog built with NiceGUI v2.22.1, featuring dark theme, zero database dependencies, and modern UI components\">
         <meta property=\"og:image\" content=\"/static/favicon/android-chrome-512x512.png\">
         <meta name=\"twitter:card\" content=\"summary_large_image\">
-        <meta name=\"twitter:title\" content=\"NiceGUI Dark Blog\">
+        <meta name=\"twitter:title\" content=\"NiceGUI Blog\">
         <meta name=\"twitter:description\" content=\"Modern Python blog with dark theme and lightning-fast performance\">
 
         <!-- Enhanced JavaScript for scroll-to-top button -->
@@ -179,7 +179,7 @@ def create_header() -> ui.element:
         # Main title with improved styling
         with ui.row().classes("items-center justify-center gap-3 mb-3"):
             ui.icon("article", size="2.5rem").classes("text-purple-accent")
-            ui.link("NiceGUI Dark Blog", "/blog", new_tab=False).classes(
+            ui.link("NiceGUI Blog", "/blog", new_tab=False).classes(
                 "no-underline text-4xl font-bold transition-all duration-300 hover:scale-105"
             ).style(
                 "color: var(--purple-accent); text-shadow: 0 2px 4px rgba(0,0,0,0.3)"

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/dunamismax/images/blob/main/python/NiceBlog.png" alt="NiceGUI Dark Blog" width="300" />
+  <img src="https://github.com/dunamismax/images/blob/main/python/NiceBlog.png" alt="NiceGUI Blog" width="300" />
 </p>
 
 <p align="center">
@@ -26,7 +26,7 @@
 
 <div align="center">
 
-# NiceGUI Dark Blog
+# NiceGUI Blog
 
 <p style="color: #713A90; font-size: 18px; font-weight: 500;">
 A stunning dark-themed blog application built with Python 3.13 and NiceGUI v2.22.1<br>
@@ -397,6 +397,6 @@ ps aux | grep nicegui-blog
 ---
 
 <p align="center">
-  <strong style="color: #713A90; font-size: 18px;">NiceGUI Dark Blog</strong><br>
+  <strong style="color: #713A90; font-size: 18px;">NiceGUI Blog</strong><br>
   <sub style="color: #713A90;">Python 3.13 • Dark Theme • Beautiful UI • Lightning Fast • Zero Database Dependencies • Production Ready</sub>
 </p>
