@@ -12,17 +12,37 @@ from typing import Any
 import bleach
 import frontmatter
 import markdown
+from PIL import Image
 
 logger = logging.getLogger(__name__)
 
 
 def optimize_image_references(html_content: str) -> str:
-    """Add lazy loading and responsive classes to images in HTML."""
-    return re.sub(
-        r"<img([^>]*?)>",
-        r'<img\1 loading="lazy" decoding="async" class="responsive-image">',
-        html_content,
-    )
+    """Convert images to WebP and wrap them in responsive picture elements."""
+
+    def repl(match: re.Match[str]) -> str:
+        attrs = match.group(1)
+        src_match = re.search(r'src="([^"]+)"', attrs)
+        if not src_match:
+            return (
+                f'<img{attrs} loading="lazy" decoding="async" class="responsive-image">'
+            )
+        src = src_match.group(1)
+        img_path = Path(src.lstrip("/"))
+        webp_path = img_path.with_suffix(".webp")
+        try:
+            if img_path.exists() and not webp_path.exists():
+                Image.open(img_path).save(webp_path, format="WEBP")
+        except Exception:
+            logger.debug("Failed to convert %s to WebP", img_path)
+        return (
+            f"<picture>"
+            f'<source srcset="{webp_path.as_posix()}" type="image/webp">'
+            f'<img{attrs} loading="lazy" decoding="async" class="responsive-image">'
+            f"</picture>"
+        )
+
+    return re.sub(r"<img([^>]*?)>", repl, html_content)
 
 
 def create_slug(filename: str) -> str:

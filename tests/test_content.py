@@ -3,6 +3,8 @@
 import sys
 from pathlib import Path
 
+from PIL import Image
+
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
@@ -11,6 +13,7 @@ from app.content import (  # noqa: E402
     create_slug,
     get_all_posts,
     get_post_by_slug,
+    optimize_image_references,
     validate_post_metadata,
 )
 
@@ -57,6 +60,16 @@ def test_get_post_by_slug_sanitizes_html(tmp_path: Path) -> None:
         assert "<script>" not in post["content"]
     finally:
         test_file.unlink(missing_ok=True)
+
+
+def test_optimize_image_references_converts_webp(tmp_path: Path, monkeypatch) -> None:
+    img = tmp_path / "sample.png"
+    Image.new("RGB", (1, 1), color="white").save(img)
+    html = f'<img src="{img.name}">'
+    monkeypatch.chdir(tmp_path)
+    result = optimize_image_references(html)
+    assert "<picture>" in result
+    assert (tmp_path / "sample.webp").exists()
 
 
 def test_posts_sorted_by_frontmatter_time(tmp_path: Path, monkeypatch) -> None:

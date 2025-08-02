@@ -75,6 +75,21 @@ async def weather(city: str) -> None:
 
 The first request for a city triggers a network call; subsequent visits within the TTL window load instantly from memory.
 
+For persistence across restarts or multiple instances, layer `redis.asyncio` beneath `TTLCache`:
+
+```python
+import redis.asyncio as redis
+
+redis_client = redis.Redis.from_url("redis://localhost:6379")
+
+async def get_weather(city: str) -> dict:
+    if data := await redis_client.get(city):
+        return json.loads(data)
+    info = await fetch_weather(city)
+    await redis_client.setex(city, 300, json.dumps(info))
+    return info
+```
+
 Handle network errors gracefully by wrapping calls in `try`/`except` blocks and using fallbacks when the cache is empty. Pair the cache with `asyncio.create_task` to refresh data in the background without blocking the UI.
 
 ## Invalidation and Debugging

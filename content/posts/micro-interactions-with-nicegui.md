@@ -659,3 +659,5 @@ Micro-interactions are powerful tools for creating engaging, professional NiceGU
 The key to successful micro-interactions is subtlety and purpose. Every animation should serve a functional purpose while adding a touch of polish that makes your NiceGUI application stand out from the competition.
 
 Start small with simple hover effects and loading states, then gradually add more sophisticated interactions as you become comfortable with the patterns. Remember that the best micro-interactions are often the ones users don't consciously notice—they just make the experience feel smooth and professional.
+
+This blog's service worker caches the compiled CSS and script assets so micro-interactions stay responsive even when offline.

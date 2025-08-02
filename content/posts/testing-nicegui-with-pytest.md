@@ -983,15 +983,13 @@ jobs:
     - name: Install dependencies
       run: |
         uv sync --dev
+        npm ci
+        npm run build:css
     
     - name: Run linting
       run: |
-        uv run ruff check .
-        uv run ruff format --check .
-    
-    - name: Run type checking
-      run: |
-        uv run mypy .
+        uv run ruff format .
+        uv run ruff check . --fix
     
     - name: Run unit tests
       run: |
