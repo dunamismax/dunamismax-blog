@@ -2,7 +2,18 @@
   <img src="https://github.com/dunamismax/images/blob/main/python/NiceBlog.png" alt="NiceGUI Blog" width="300" />
 </p>
 
+<div align="center">
 # NiceGUI Blog
+</div>
+
+<div align="center">
+
+<p style="color: #713A90; font-size: 18px; font-weight: 500;">
+A stunning dark-themed blog application built with Python 3.13 and NiceGUI v2.22.1<br>
+Featuring beautiful purple & orange aesthetics with lightning-fast performance
+</p>
+
+</div>
 
 <p align="center">
   <a href="https://blog.dunamismax.com/">
@@ -38,19 +49,6 @@
 </p>
 
 ---
-
-<div align="center">
-
-<p style="color: #713A90; font-size: 18px; font-weight: 500;">
-A stunning dark-themed blog application built with Python 3.13 and NiceGUI v2.22.1<br>
-Featuring beautiful purple & orange aesthetics with lightning-fast performance
-</p>
-
-<a href="https://blog.dunamismax.com/" target="_blank">
-  <img src="https://img.shields.io/badge/Live-Demo-713A90.svg?style=for-the-badge&logo=rocket&logoColor=white" alt="Live Demo">
-</a>
-
-</div>
 
 ## Core Features
 
