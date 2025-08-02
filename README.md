@@ -62,6 +62,9 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
   <img src="https://github.com/dunamismax/images/blob/main/python/Repo-Features.png" alt="Repository Features" width="400" />
 </p>
 
+* Built-in HTML sanitization to prevent XSS
+* Token-protected admin cache management endpoint
+
 ## Project Structure
 
 ```sh
@@ -97,6 +100,9 @@ uv python install 3.13
 uv python pin 3.13
 uv sync
 
+# Set admin token for cache route
+export BLOG_ADMIN_TOKEN=your-token
+
 # Run the application in development mode
 uv run python app/main.py
 ```
@@ -125,7 +131,7 @@ uv run python app/main.py
 </tr>
 <tr>
 <td><code>/admin/cache</code></td>
-<td>Cache management interface</td>
+<td>Token-protected cache management interface</td>
 <td><img src="https://img.shields.io/badge/-Admin-713A90?style=flat" alt="Admin"></td>
 </tr>
 </table>
@@ -172,7 +178,7 @@ uv run ruff format .               # Format all code
 uv run ruff check . --fix          # Lint and auto-fix issues
 
 # Clear application caches (during development)
-# Visit http://localhost:8080/admin/cache and click "Clear All Caches"
+# Visit http://localhost:8080/admin/cache?token=<your-token> and click "Clear All Caches"
 ```
 
 ### Production Build Commands
