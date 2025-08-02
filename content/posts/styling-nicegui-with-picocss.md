@@ -60,6 +60,8 @@ button.outline {
 
 Define additional variables such as `--h1-color` or `--button-border-radius` to fine‑tune the look. Keep overrides scoped to avoid unintended side effects.
 
+During builds, `blog.css` is processed by PostCSS with autoprefixer and cssnano to emit a minified `blog.min.css` served via a service worker for faster loads.
+
 ## Custom Fonts
 
 Load Google Fonts or local fonts with another `ui.add_head_html` call:

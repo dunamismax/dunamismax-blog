@@ -148,10 +148,25 @@ class IntelligentCacheManager(Generic[T]):
         """Background refresh to keep cache warm."""
         try:
             value = await compute_func() if asyncio.iscoroutinefunction(compute_func) else compute_func()
-            self.l1_cache[key] = value
-            self.l2_cache[key] = value
-        except Exception as e:
-            logger.warning(f"Background refresh failed for {key}: {e}")
+        self.l1_cache[key] = value
+        self.l2_cache[key] = value
+    except Exception as e:
+        logger.warning(f"Background refresh failed for {key}: {e}")
+```
+
+To persist cache entries beyond process memory, a Redis store mirrors hot keys from these layers:
+
+```python
+import redis.asyncio as redis
+
+redis_client = redis.Redis.from_url("redis://localhost:6379")
+
+async def cache_with_redis(key: str, ttl: int, compute: Callable[[], T]) -> T:
+    if data := await redis_client.get(key):
+        return json.loads(data)
+    value = await compute()
+    await redis_client.setex(key, ttl, json.dumps(value))
+    return value
 ```
 
 ### **Content Processing Pipeline**
@@ -623,7 +638,13 @@ class BlogMetrics:
         )
 ```
 
+## **Offline-Ready Asset Pipeline**
+
+CSS passes through PostCSS (autoprefixer and cssnano) to produce `static/blog.min.css`. Pillow converts images to WebP, and a service worker caches these assets for offline visits.
+
 ## **Security Architecture**
+
+Middleware adds strict security headers (HSTS, X-Frame-Options, CSP) to every response, and a `monitoring.py` utility queries PageSpeed Insights to track Core Web Vitals over time.
 
 ```python
 import hmac
@@ -693,5 +714,7 @@ This blog platform embodies several key engineering principles:
 This platform demonstrates that Python can compete with any web technology stack when combined with modern engineering practices. The marriage of Python 3.13's performance improvements, NiceGUI's elegant abstractions, and enterprise-grade architecture patterns creates a development experience that is both powerful and delightful.
 
 The result is a blog platform that loads in under 100ms, scales effortlessly, and maintains itself—proving that the future of web development is Python-first, performance-conscious, and beautifully simple.
+
+Packaging options span PyInstaller and Briefcase, giving distributable binaries for desktop or mobile platforms.
 
 **This is more than a blog; it's a blueprint for the next generation of Python web applications.**

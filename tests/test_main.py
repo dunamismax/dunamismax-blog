@@ -3,12 +3,17 @@
 from typing import Any
 
 from starlette.requests import Request
+from starlette.testclient import TestClient
 
 from app.main import (
+    SECURITY_HEADERS,
     apply_filter,
     filter_posts_by_tag,
     filter_posts_by_tags,
     is_admin_authorized,
+)
+from app.main import (
+    app as nicegui_app,
 )
 
 
@@ -64,3 +69,10 @@ def test_filter_posts_by_tags() -> None:
         posts[2],
     ]
     assert filter_posts_by_tags(["unknown"], posts) == []
+
+
+def test_security_headers_present() -> None:
+    client = TestClient(nicegui_app)
+    response = client.post("/vitals", json={})
+    for header, value in SECURITY_HEADERS.items():
+        assert response.headers.get(header) == value

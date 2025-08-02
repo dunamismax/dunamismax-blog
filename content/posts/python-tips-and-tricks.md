@@ -409,10 +409,10 @@ def expensive_operation(n: int) -> int:
 
 ```python
 # Use modern linting and formatting tools
-# ruff check . --fix          # Fast linting and auto-fixes
 # ruff format .               # Code formatting
-# mypy .                      # Static type checking
-# pytest --cov=.             # Test coverage analysis
+# ruff check . --fix          # Fast linting and auto-fixes
+# npm run build:css           # Optimize CSS assets
+# pytest --cov=.              # Test coverage analysis
 ```
 
 ### **Performance Profiling**
