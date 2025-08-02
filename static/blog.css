@@ -31,6 +31,7 @@
             line-height: var(--pico-line-height);
             background-color: var(--dark-bg);
             color: var(--text-primary);
+            overflow-x: hidden;
         }
 
         code, pre, .highlight {
@@ -124,8 +125,10 @@
         }
 
         .blog-content {
-            max-width: none;
+            max-width: 100%;
+            width: 100%;
             line-height: 1.7;
+            overflow-wrap: anywhere;
         }
 
         .blog-content h1, .blog-content h2, .blog-content h3,
