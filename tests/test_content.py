@@ -42,3 +42,18 @@ def test_get_post_by_slug_returns_content() -> None:
     post = get_post_by_slug(slug)
     assert post is not None
     assert "content" in post and "<" in post["content"]
+
+
+def test_get_post_by_slug_sanitizes_html(tmp_path: Path) -> None:
+    """HTML content should be sanitized to prevent scripts."""
+    posts_dir = Path("content/posts")
+    test_file = posts_dir / "xss-test.md"
+    test_file.write_text(
+        "---\ntitle: XSS\n---\n<script>alert('bad')</script>", encoding="utf-8"
+    )
+    try:
+        post = get_post_by_slug("xss-test")
+        assert post is not None
+        assert "<script>" not in post["content"]
+    finally:
+        test_file.unlink(missing_ok=True)

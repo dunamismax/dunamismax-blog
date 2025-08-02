@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import hmac
 import logging
+import os
 from pathlib import Path
 from typing import Any
 
 from cachetools import TTLCache
+from fastapi import Request
 from nicegui import app, ui
 from pygments.formatters import HtmlFormatter
 
@@ -19,6 +22,9 @@ logger = logging.getLogger(__name__)
 # Memory-based cache for posts (TTL: 10 minutes)
 posts_cache: TTLCache[str, list[dict[str, Any]]] = TTLCache(maxsize=100, ttl=600)
 content_cache: TTLCache[str, dict[str, Any]] = TTLCache(maxsize=50, ttl=1200)
+
+# Current list of posts shown on the index page
+filtered_posts: list[dict[str, Any]] = []
 
 
 def get_cached_posts() -> list[dict[str, Any]]:
@@ -53,6 +59,16 @@ def clear_cache() -> None:
     logger.info("All caches cleared")
 
 
+def is_admin_authorized(request: Request) -> bool:
+    """Return True if the request provides the correct admin token."""
+    token = os.getenv("BLOG_ADMIN_TOKEN")
+    if not token:
+        logger.warning("Admin token not configured")
+        return False
+    provided = request.query_params.get("token", "")
+    return hmac.compare_digest(provided, token)
+
+
 def generate_syntax_highlighting_css() -> None:
     """Generate CSS file for Pygments syntax highlighting."""
     formatter = HtmlFormatter(
@@ -73,236 +89,25 @@ def generate_syntax_highlighting_css() -> None:
 
 
 def add_global_styles() -> None:
-    """Add global styles and fonts to the application using modern NiceGUI patterns."""
-    # Set page theme to dark
+    """Add global styles and external stylesheets."""
     ui.dark_mode().enable()
-
     ui.add_head_html(
         """
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="/static/syntax.css">
-        <meta name="theme-color" content="#1E1E2E">
-        <meta name="description" content="A modern, fast blog built with NiceGUI and Python">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta property="og:type" content="website">
-        <meta property="og:title" content="My Modern NiceGUI Blog">
-        <meta property="og:description" content="A lightning-fast blog built with NiceGUI v2.22.1">
+        <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css\">
+        <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">
+        <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>
+        <link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap\" rel=\"stylesheet\">
+        <link rel=\"stylesheet\" href=\"/static/syntax.css\">
+        <link rel=\"stylesheet\" href=\"/static/blog.css\">
+        <meta name=\"theme-color\" content=\"#1E1E2E\">
+        <meta name=\"description\" content=\"A modern, fast blog built with NiceGUI and Python\">
+        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+        <meta property=\"og:type\" content=\"website\">
+        <meta property=\"og:title\" content=\"My Modern NiceGUI Blog\">
+        <meta property=\"og:description\" content=\"A lightning-fast blog built with NiceGUI v2.22.1\">
     """,
         shared=True,
     )
-
-    # Use ui.add_css for better performance and organization
-    ui.add_css("""
-        :root {
-            --pico-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-            --pico-font-size: 18px;
-            --pico-line-height: 1.33;
-
-            /* Dark theme color scheme */
-            --dark-bg: #1E1E2E;
-            --purple-accent: #713A90;
-            --orange-accent: #D77757;
-            --text-primary: #FFFFFF;
-            --text-secondary: #B4B4B4;
-            --card-bg: #2A2A3E;
-            --border-color: #3A3A4E;
-        }
-
-        /* Force dark theme */
-        [data-theme="dark"],
-        :root:not([data-theme="light"]) {
-            --pico-background-color: var(--dark-bg);
-            --pico-color: var(--text-primary);
-            --pico-card-background-color: var(--card-bg);
-            --pico-border-color: var(--border-color);
-            --pico-primary: var(--purple-accent);
-            --pico-secondary: var(--orange-accent);
-        }
-
-        body {
-            font-family: var(--pico-font-family);
-            font-size: var(--pico-font-size);
-            line-height: var(--pico-line-height);
-            background-color: var(--dark-bg);
-            color: var(--text-primary);
-        }
-
-        .blog-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .blog-header a {
-            color: var(--purple-accent);
-        }
-
-        .blog-header a:hover {
-            color: var(--orange-accent);
-        }
-
-        .blog-post-card {
-            margin-bottom: 1.5rem;
-            transition: box-shadow 0.2s ease;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-        }
-
-        .blog-post-card:hover {
-            box-shadow: 0 8px 25px rgba(113, 58, 144, 0.2);
-            border-color: var(--purple-accent);
-        }
-
-        .blog-post-meta {
-            color: var(--text-secondary);
-            font-size: 16px;
-            margin-bottom: 0.5rem;
-        }
-
-        .blog-post-title {
-            margin-bottom: 0.5rem;
-        }
-
-        .blog-post-card a {
-            color: var(--text-primary);
-        }
-
-        .blog-post-card a:hover {
-            color: var(--purple-accent);
-        }
-
-        .blog-post-summary {
-            margin-bottom: 1rem;
-        }
-
-        .blog-content {
-            max-width: none;
-            line-height: 1.7;
-        }
-
-        .blog-content h1, .blog-content h2, .blog-content h3,
-        .blog-content h4, .blog-content h5, .blog-content h6 {
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-            line-height: 1.3;
-        }
-
-        .blog-content p {
-            margin-bottom: 1rem;
-        }
-
-        .blog-content pre {
-            border-radius: 0.5rem;
-            overflow-x: auto;
-        }
-
-        .highlight {
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin: 1rem 0;
-            background-color: var(--card-bg) !important;
-            border: 1px solid var(--border-color);
-        }
-
-        .prose {
-            color: var(--text-primary);
-        }
-
-        .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
-            color: var(--purple-accent);
-        }
-
-        .prose a {
-            color: var(--orange-accent);
-        }
-
-        .prose a:hover {
-            color: var(--purple-accent);
-        }
-
-        .prose img {
-            border-radius: 0.5rem;
-            max-width: 100%;
-            height: auto;
-        }
-
-        .scroll-to-top {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 1000;
-            transition: opacity 0.3s ease;
-        }
-
-        .search-container {
-            position: relative;
-            margin-bottom: 2rem;
-        }
-
-        .blog-stats {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .loading-skeleton {
-            background: linear-gradient(90deg, var(--card-bg) 25%, var(--border-color) 50%, var(--card-bg) 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        /* Input and form styling */
-        input, textarea, select {
-            background-color: var(--card-bg) !important;
-            border: 1px solid var(--border-color) !important;
-            color: var(--text-primary) !important;
-            font-family: var(--pico-font-family) !important;
-            font-size: var(--pico-font-size) !important;
-        }
-
-        input:focus, textarea:focus, select:focus {
-            border-color: var(--purple-accent) !important;
-            box-shadow: 0 0 0 1px var(--purple-accent) !important;
-        }
-
-        /* Button styling */
-        button {
-            background-color: var(--purple-accent) !important;
-            color: white !important;
-            border: none !important;
-        }
-
-        button:hover {
-            background-color: var(--orange-accent) !important;
-        }
-
-        /* Footer styling */
-        footer {
-            border-top: 1px solid var(--border-color) !important;
-            color: var(--text-secondary);
-        }
-
-        @media (max-width: 768px) {
-            .blog-header {
-                margin-bottom: 1rem;
-            }
-
-            .scroll-to-top {
-                bottom: 1rem;
-                right: 1rem;
-            }
-        }
-    """)
 
 
 def create_header() -> ui.element:
@@ -353,23 +158,29 @@ def create_search_bar() -> ui.element:
 
 
 def filter_posts(query: str) -> None:
-    """Filter posts based on search query."""
-    if not query:
-        return
-    # Enhanced search implementation
+    """Filter posts based on search query and refresh UI."""
+    global filtered_posts
     posts = get_cached_posts()
-    filtered = [
+    filtered_posts = apply_filter(query, posts)
+    logger.info(f"Found {len(filtered_posts)} posts matching '{query}'")
+    render_posts.refresh()
+
+
+def apply_filter(query: str, posts: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Return posts that match a query in title, summary, or tags."""
+    if not query:
+        return posts
+    q = query.lower()
+    return [
         post
         for post in posts
-        if query.lower() in post.get("title", "").lower()
-        or query.lower() in post.get("summary", "").lower()
-        or any(query.lower() in tag.lower() for tag in post.get("tags", []))
+        if q in post.get("title", "").lower()
+        or q in post.get("summary", "").lower()
+        or any(q in tag.lower() for tag in post.get("tags", []))
     ]
-    logger.info(f"Found {len(filtered)} posts matching '{query}'")
-    # Note: Full reactive implementation would require UI state management
 
 
-def create_blog_stats(posts: list) -> ui.element:
+def create_blog_stats(posts: list[dict[str, Any]]) -> ui.element:
     """Create a stats card showing blog metrics."""
     with (
         ui.card().classes("blog-stats w-full max-w-md") as stats_card,
@@ -397,6 +208,59 @@ def create_blog_stats(posts: list) -> ui.element:
     return stats_card
 
 
+@ui.refreshable
+def render_posts() -> None:
+    """Render the list of posts based on the current filter."""
+    if not filtered_posts:
+        with ui.column().classes("items-center gap-6 text-center p-8"):
+            ui.icon("article", size="4rem").classes("text-gray-400")
+            ui.label("No posts yet").classes("text-2xl font-semibold")
+            ui.markdown(
+                "Add some Markdown files to the `content/posts` directory to get started!"
+            ).classes("opacity-80 max-w-md text-center")
+        return
+
+    with ui.column().classes("gap-6"):
+        for post in filtered_posts:
+            with ui.card().classes("blog-post-card w-full"):
+                with ui.row().classes("justify-between items-center mb-2"):
+                    if post.get("date"):
+                        ui.label(post["date"].strftime("%B %d, %Y")).classes(
+                            "blog-post-meta text-sm opacity-70"
+                        )
+
+                    word_count = post.get("word_count", 0)
+                    read_time = post.get("read_time", max(1, word_count // 200))
+                    ui.label(f"{read_time} min read").classes("text-sm opacity-60")
+
+                ui.link(
+                    post.get("title", "Untitled"),
+                    f"/blog/{post['slug']}",
+                    new_tab=False,
+                ).classes(
+                    "text-xl font-semibold mb-2 no-underline text-inherit hover:text-blue-600 transition-colors block"
+                )
+
+                if post.get("summary"):
+                    ui.label(post["summary"]).classes("mb-4 opacity-90 leading-relaxed")
+
+                with ui.row().classes("justify-between items-center"):
+                    ui.link(
+                        "Read more →",
+                        f"/blog/{post['slug']}",
+                        new_tab=False,
+                    ).classes("font-medium").style("color: var(--orange-accent)")
+
+                    if post.get("tags"):
+                        with ui.row().classes("gap-1"):
+                            for tag in post["tags"][:3]:
+                                ui.label(f"#{tag}").classes(
+                                    "text-xs px-2 py-1 rounded-full"
+                                ).style(
+                                    "background-color: var(--purple-accent); color: white"
+                                )
+
+
 def create_scroll_to_top() -> ui.element:
     """Create a floating scroll-to-top button."""
     with (
@@ -419,7 +283,7 @@ def index() -> None:
 
 @ui.page("/blog")
 def blog_index() -> None:
-    """Blog index page displaying all posts using modern NiceGUI patterns."""
+    """Blog index page displaying all posts."""
     add_global_styles()
 
     with ui.column().classes("w-full items-center min-h-screen"):
@@ -430,75 +294,16 @@ def blog_index() -> None:
             ui.column().classes("max-w-4xl w-full px-4"),
         ):
             posts = get_cached_posts()
+            filtered_posts[:] = posts
 
-            # Add search bar and stats
             with ui.row().classes("w-full justify-center mb-6"):
                 create_search_bar()
 
-            if posts:
-                create_blog_stats(posts)
+            if filtered_posts:
+                create_blog_stats(filtered_posts)
 
-            if not posts:
-                with ui.column().classes("items-center gap-6 text-center p-8"):
-                    ui.icon("article", size="4rem").classes("text-gray-400")
-                    ui.label("No posts yet").classes("text-2xl font-semibold")
-                    ui.markdown(
-                        "Add some Markdown files to the `content/posts` directory to get started!"
-                    ).classes("opacity-80 max-w-md text-center")
-            else:
-                with ui.column().classes("gap-6"):
-                    for post in posts:
-                        with ui.card().classes("blog-post-card w-full"):
-                            # Post metadata row
-                            with ui.row().classes("justify-between items-center mb-2"):
-                                if post.get("date"):
-                                    ui.label(
-                                        post["date"].strftime("%B %d, %Y")
-                                    ).classes("blog-post-meta text-sm opacity-70")
+            render_posts()
 
-                                # Reading time estimation
-                                word_count = post.get("word_count", 0)
-                                read_time = post.get(
-                                    "read_time", max(1, word_count // 200)
-                                )
-                                ui.label(f"{read_time} min read").classes(
-                                    "text-sm opacity-60"
-                                )
-
-                            ui.link(
-                                post.get("title", "Untitled"),
-                                f"/blog/{post['slug']}",
-                                new_tab=False,
-                            ).classes(
-                                "text-xl font-semibold mb-2 no-underline text-inherit hover:text-blue-600 transition-colors block"
-                            )
-
-                            if post.get("summary"):
-                                ui.label(post["summary"]).classes(
-                                    "mb-4 opacity-90 leading-relaxed"
-                                )
-
-                            # Enhanced action row with tags if available
-                            with ui.row().classes("justify-between items-center"):
-                                ui.link(
-                                    "Read more →",
-                                    f"/blog/{post['slug']}",
-                                    new_tab=False,
-                                ).classes("font-medium").style(
-                                    "color: var(--orange-accent)"
-                                )
-
-                                # Add tags if they exist
-                                if post.get("tags"):
-                                    with ui.row().classes("gap-1"):
-                                        for tag in post["tags"][:3]:  # Show max 3 tags
-                                            ui.label(f"#{tag}").classes(
-                                                "text-xs px-2 py-1 rounded-full"
-                                            ).style(
-                                                "background-color: var(--purple-accent); color: white"
-                                            )
-
-        # Add scroll to top button
         create_scroll_to_top()
         create_footer()
 
@@ -624,9 +429,14 @@ def blog_post(slug: str) -> None:
 
 
 @ui.page("/admin/cache")
-def admin_cache() -> None:
-    """Admin route for cache management - basic security through obscurity."""
+def admin_cache(request: Request) -> None:
+    """Admin route for cache management protected by a token."""
     add_global_styles()
+
+    if not is_admin_authorized(request):
+        with ui.column().classes("w-full items-center min-h-screen"):
+            ui.label("Unauthorized").classes("text-red-500 text-xl mt-8")
+        return
 
     with (
         ui.column().classes("w-full items-center min-h-screen"),
@@ -662,7 +472,8 @@ def show_cache_stats() -> None:
     ui.notify(f"Posts: {len(posts_cache)}, Content: {len(content_cache)}", type="info")
 
 
-app.add_static_files("/static", "../static")
+STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+app.add_static_files("/static", str(STATIC_DIR))
 
 
 @app.on_startup

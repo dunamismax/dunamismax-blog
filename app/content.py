@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-import asyncio
 import logging
 import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+import bleach
 import frontmatter
 import markdown
 
@@ -67,49 +67,6 @@ def validate_post_metadata(metadata: dict[str, Any], filename: str) -> dict[str,
             validated["tags"] = []
 
     return validated
-
-
-async def load_post_async(md_file: Path) -> dict[str, Any] | None:
-    """Asynchronously load a single post file with comprehensive error handling."""
-    try:
-        if not md_file.is_file():
-            logger.warning("Skipping non-file: %s", md_file)
-            return None
-
-        if md_file.stat().st_size == 0:
-            logger.warning("Skipping empty file: %s", md_file)
-            return None
-
-        # Use asyncio for file I/O
-        loop = asyncio.get_event_loop()
-
-        def read_file():
-            with open(md_file, encoding="utf-8") as f:
-                return frontmatter.load(f)
-
-        post = await loop.run_in_executor(None, read_file)
-
-        # Validate and process metadata
-        metadata = validate_post_metadata(post.metadata, md_file.name)
-        metadata["slug"] = create_slug(md_file.name)
-        metadata["filename"] = md_file.name
-
-        content = post.content or ""
-        metadata["content"] = content
-        metadata["word_count"] = len(content.split())
-        metadata["read_time"] = max(1, metadata["word_count"] // 200)
-
-        # Parse date with enhanced error handling
-        if "date" in metadata:
-            metadata["date"] = parse_date(metadata["date"], md_file)
-        else:
-            metadata["date"] = datetime.fromtimestamp(md_file.stat().st_mtime)
-
-        return metadata
-
-    except Exception:
-        logger.exception("Error loading post %s", md_file)
-        return None
 
 
 def parse_date(date_value: Any, md_file: Path) -> datetime:
@@ -339,6 +296,42 @@ def get_post_by_slug(slug: str) -> dict[str, Any] | None:
         except Exception as e:
             logger.error("Error converting markdown to HTML for %s: %s", slug, e)
             html_content = f"<p>Error processing content: {e}</p>"
+
+        allowed_tags = bleach.sanitizer.ALLOWED_TAGS.union(
+            {
+                "p",
+                "pre",
+                "span",
+                "h1",
+                "h2",
+                "h3",
+                "h4",
+                "h5",
+                "h6",
+                "img",
+                "table",
+                "thead",
+                "tbody",
+                "tr",
+                "th",
+                "td",
+                "code",
+                "blockquote",
+                "ul",
+                "ol",
+                "li",
+                "div",
+            }
+        )
+        allowed_attributes = {
+            **bleach.sanitizer.ALLOWED_ATTRIBUTES,
+            "img": ["src", "alt", "title"],
+            "a": ["href", "title", "rel"],
+            "*": ["class"],
+        }
+        html_content = bleach.clean(
+            html_content, tags=allowed_tags, attributes=allowed_attributes
+        )
 
         # Validate and process metadata using new validation function
         metadata = validate_post_metadata(post.metadata or {}, matching_file.name)

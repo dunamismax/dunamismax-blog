@@ -49,7 +49,7 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
 </td>
 <td align="center" width="25%">
 <img src="https://img.shields.io/badge/-File_Based-713A90?style=for-the-badge&logo=markdown&logoColor=white" alt="File Based"><br>
-<sub><b>Zero Dependencies</b></sub>
+<sub><b>Zero Database Dependencies</b></sub>
 </td>
 <td align="center" width="25%">
 <img src="https://img.shields.io/badge/-Standalone-713A90?style=for-the-badge&logo=package&logoColor=white" alt="Standalone"><br>
@@ -62,6 +62,9 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
   <img src="https://github.com/dunamismax/images/blob/main/python/Repo-Features.png" alt="Repository Features" width="400" />
 </p>
 
+* Built-in HTML sanitization to prevent XSS
+* Token-protected admin cache management endpoint
+
 ## Project Structure
 
 ```sh
@@ -72,7 +75,8 @@ nicegui-blog/
 ├── content/                 # Blog content
 │   └── posts/               # Markdown blog posts with front matter
 ├── static/                  # Static assets
-│   └── syntax.css           # Auto-generated Pygments styling
+│   ├── blog.css            # Global styles
+│   └── syntax.css          # Auto-generated Pygments styling
 ├── tests/                   # Test suite
 ├── build.py                 # PyInstaller build script
 └── pyproject.toml           # Modern Python project configuration
@@ -89,13 +93,21 @@ nicegui-blog/
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Clone and setup the repository
-git clone <repository-url>
+git clone https://github.com/dunamismax/nicegui-blog.git
 cd nicegui-blog
 
 # Setup Python 3.13 environment and dependencies
 uv python install 3.13
 uv python pin 3.13
 uv sync
+
+# Set admin token for cache route
+export BLOG_ADMIN_TOKEN=your-token
+
+# Run code quality checks and tests
+uv run ruff format .
+uv run ruff check . --fix
+uv run pytest
 
 # Run the application in development mode
 uv run python app/main.py
@@ -124,8 +136,8 @@ uv run python app/main.py
 <td><img src="https://img.shields.io/badge/-Posts-713A90?style=flat" alt="Posts"></td>
 </tr>
 <tr>
-<td><code>/admin/cache</code></td>
-<td>Cache management interface</td>
+<td><code>/admin/cache?token=&lt;token&gt;</code></td>
+<td>Token-protected cache management interface</td>
 <td><img src="https://img.shields.io/badge/-Admin-713A90?style=flat" alt="Admin"></td>
 </tr>
 </table>
@@ -171,8 +183,11 @@ uv run python app/main.py
 uv run ruff format .               # Format all code
 uv run ruff check . --fix          # Lint and auto-fix issues
 
+# Run tests
+uv run pytest
+
 # Clear application caches (during development)
-# Visit http://localhost:8080/admin/cache and click "Clear All Caches"
+# Visit http://localhost:8080/admin/cache?token=<your-token> and click "Clear All Caches"
 ```
 
 ### Production Build Commands
@@ -314,5 +329,5 @@ ps aux | grep nicegui-blog
 
 <p align="center">
   <strong style="color: #713A90; font-size: 18px;">NiceGUI Dark Blog</strong><br>
-  <sub style="color: #713A90;">Python 3.13 • Dark Theme • Beautiful UI • Lightning Fast • Zero Dependencies • Production Ready</sub>
+  <sub style="color: #713A90;">Python 3.13 • Dark Theme • Beautiful UI • Lightning Fast • Zero Database Dependencies • Production Ready</sub>
 </p>
