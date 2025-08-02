@@ -99,7 +99,7 @@ def add_global_styles() -> None:
         <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css\">
         <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">
         <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>
-        <link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap\" rel=\"stylesheet\">
+        <link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap\" rel=\"stylesheet\">
         <link rel=\"stylesheet\" href=\"/static/syntax.css\">
         <link rel=\"stylesheet\" href=\"/static/blog.css\">
 
@@ -171,10 +171,10 @@ def create_header() -> ui.element:
     """Create a reusable header component with improved design and centering."""
     with (
         ui.row().classes(
-            "w-full justify-center bg-gradient-header"
+            "w-full justify-center items-center bg-gradient-header"
         ) as header_container,
-        ui.column().classes("max-w-4xl w-full px-4 py-8"),
-        ui.element("header").classes("modern-blog-header text-center"),
+        ui.column().classes("max-w-4xl w-full px-4 py-8 items-center text-center"),
+        ui.element("header").classes("modern-blog-header"),
     ):
         # Main title with improved styling
         with ui.row().classes("items-center justify-center gap-3 mb-3"):
@@ -193,7 +193,7 @@ def create_header() -> ui.element:
         # Feature badges
         with ui.row().classes("justify-center gap-2 mt-4 flex-wrap"):
             ui.badge("Python 3.13", color="purple").classes("px-3 py-1")
-            ui.badge("Dark Theme", color="orange").classes("px-3 py-1")
+            ui.badge("Dark Theme", color="purple").classes("px-3 py-1")
             ui.badge("Zero Database", color="purple").classes("px-3 py-1")
     return header_container
 
@@ -202,9 +202,11 @@ def create_footer() -> ui.element:
     """Create a reusable footer component using modern NiceGUI patterns."""
     with (
         ui.row().classes("w-full justify-center mt-auto") as footer_container,
-        ui.column().classes("max-w-4xl w-full px-4"),
-        ui.element("footer").classes("text-center mt-12 pt-8 border-t border-gray-300"),
-        ui.row().classes("justify-center items-center gap-1"),
+        ui.column().classes("max-w-4xl w-full px-4 items-center"),
+        ui.element("footer").classes(
+            "text-center mt-12 pt-8 border-t border-gray-300 w-full"
+        ),
+        ui.row().classes("justify-center items-center gap-1 flex-wrap"),
     ):
         ui.label("© 2025 My Blog. Built with")
         ui.link("NiceGUI", "https://nicegui.io", new_tab=True).classes(
@@ -457,7 +459,9 @@ def create_scroll_to_top() -> ui.element:
     with (
         ui.button(
             icon="keyboard_arrow_up",
-            on_click="window.scrollTo({top: 0, behavior: 'smooth'})",
+            on_click=lambda: ui.run_javascript(
+                "window.scrollTo({top: 0, behavior: 'smooth'})"
+            ),
         )
         .props("fab glossy")
         .classes("scroll-to-top")
