@@ -110,6 +110,17 @@ def build_executable():
     return True
 
 
+def build_with_briefcase() -> bool:
+    """Build the application using Briefcase."""
+    cmd = ["briefcase", "build"]
+    try:
+        subprocess.run(cmd, check=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"Briefcase build failed: {e}")
+        return False
+
+
 def clean_build():
     """Clean build artifacts."""
     print("Cleaning build artifacts...")
@@ -137,6 +148,11 @@ def main():
     parser.add_argument(
         "--spec-only", action="store_true", help="Only create spec file"
     )
+    parser.add_argument(
+        "--briefcase",
+        action="store_true",
+        help="Build with Briefcase instead of PyInstaller",
+    )
 
     args = parser.parse_args()
 
@@ -146,6 +162,13 @@ def main():
 
     if args.spec_only:
         create_spec_file()
+        return
+
+    if args.briefcase:
+        if build_with_briefcase():
+            print("\nBriefcase build completed successfully!")
+        else:
+            sys.exit(1)
         return
 
     # Default: create spec and build
