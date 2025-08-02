@@ -1,7 +1,7 @@
 ---
 title: Styling NiceGUI with Pico.css
 date: 8/2/2025
-time: 03:03
+time: 14:15
 summary: Enhance NiceGUI interfaces with Pico.css, global CSS variables, and component
   classes.
 tags:
@@ -75,4 +75,3 @@ Reference the font in `blog.css` using `font-family: "Inter", sans-serif;` to ke
 Combine Pico's grid with NiceGUI rows and columns to support phones and tablets. Use media queries in `blog.css` to tweak padding or font sizes for smaller screens.
 
 Import the stylesheet once and enjoy consistent styling across pages.
-

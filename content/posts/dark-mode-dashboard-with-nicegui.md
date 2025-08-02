@@ -1,7 +1,7 @@
 ---
 title: Designing a Dark Mode Dashboard with NiceGUI
 date: 8/2/2025
-time: 03:06
+time: 14:30
 summary: Create a sleek dark-themed dashboard using NiceGUI, Pico.css, and Python.
 tags:
 - nicegui
@@ -80,4 +80,3 @@ Test layouts across multiple viewports and use media queries in `blog.css` to ad
 ## Conclusion
 
 With dark mode enabled and Pico.css handling baseline styles, you can focus on the data that matters. NiceGUI's Pythonic approach lets you experiment quickly and deliver dashboards that look sharp day or night. Thoughtful persistence and live updates turn a static dashboard into a dynamic tool your team will rely on.
-

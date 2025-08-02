@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="https://github.com/dunamismax/nicegui-blog">
-    <img src="https://readme-typing-svg.demolab.com/?font=Inter&weight=600&size=26&pause=800&color=713A90&center=true&vCenter=true&width=1200&height=80&lines=Dark+Theme+NiceGUI+Blog+Application;Python+3.13+%2B+NiceGUI+2.22.1;Purple+%26+Orange+Aesthetic+Design;Lightning+Fast+TTL+Cached+Content;Real+Time+Search+%26+Pagination;Image+Optimization+%26+Lazy+Loading;File+Based+Content+Management;Zero+Database+Dependencies;Standalone+Executable+Distribution;MIT+Licensed+Open+Source" alt="Typing SVG" />
+    <img src="https://readme-typing-svg.demolab.com/?font=Inter&weight=600&size=28&pause=1000&color=713A90&center=true&vCenter=true&width=1200&height=90&lines=Modern+Dark+Theme+Blog+Built+with+NiceGUI;Python+3.13+%2B+NiceGUI+v2.22.1+%2B+FastAPI;Beautiful+Purple+%26+Orange+Design+System;Lightning+Fast+TTL+Multi-Layer+Caching;Real-Time+Search+with+Smart+Pagination;Advanced+Image+Optimization+%26+Lazy+Loading;File-Based+Content+with+Zero+Dependencies;Production+Ready+Standalone+Executables;Comprehensive+Security+%26+XSS+Protection;Open+Source+MIT+Licensed+Framework" alt="Typing SVG" />
   </a>
 </p>
 
@@ -72,13 +72,13 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
 
 ## Documentation
 
-- [NiceGUI Documentation](https://nicegui.io/docs/latest)
-- [Python 3.13 Docs](https://docs.python.org/3.13/)
-- [Pico.css Docs](https://picocss.com/docs/)
-- [uv Documentation](https://docs.astral.sh/uv/)
-- [Ruff Documentation](https://docs.astral.sh/ruff/)
-- [Cachetools TTLCache](https://cachetools.readthedocs.io/en/latest/#ttlcache)
-- [PyInstaller Documentation](https://pyinstaller.org/en/stable/)
+* [NiceGUI Documentation](https://nicegui.io/docs/latest)
+* [Python 3.13 Docs](https://docs.python.org/3.13/)
+* [Pico.css Docs](https://picocss.com/docs/)
+* [uv Documentation](https://docs.astral.sh/uv/)
+* [Ruff Documentation](https://docs.astral.sh/ruff/)
+* [Cachetools TTLCache](https://cachetools.readthedocs.io/en/latest/#ttlcache)
+* [PyInstaller Documentation](https://pyinstaller.org/en/stable/)
 
 ## Project Structure
 
@@ -172,25 +172,29 @@ uv run python app/main.py
 ---
 title: "Your Post Title"
 date: "8/1/2025"
+time: "14:30"
 summary: "Brief description for the blog index"
+tags:
+- tutorial
+- nicegui
 ---
 
 # Your Content Here
 
 Full markdown support with:
-- Syntax highlighting
+- Syntax highlighting with Pygments
 - Tables and task lists
-- Math expressions
+- Code blocks with copy buttons
 - Custom fences and diagrams
 ```
 
 ### Enhanced Content Features
 
-* **Multi-Format Dates**: ISO, YYYY-MM-DD, natural language formats
+* **Smart Date/Time Handling**: Supports date + time fields for precise post ordering
 * **Advanced Markdown**: Tables, task lists, syntax highlighting, TOC generation
 * **Image Optimization**: Automatic lazy loading, responsive scaling, hover effects
 * **Auto-Generation**: Titles from filenames, dates from file modification time
-* **Error Recovery**: Graceful handling of malformed content
+* **Error Recovery**: Graceful handling of malformed content and YAML parsing
 * **SEO Optimization**: Comprehensive meta tags, Open Graph, Twitter Cards
 
 ## Build System & Commands
@@ -260,10 +264,10 @@ This application can be self-hosted using a reverse proxy like Caddy or Nginx. T
 
 3. **Start the Application:**
 
-    Run the application using `uv`:
+    Run the application:
 
     ```bash
-    uv run uvicorn app.main:app --host 0.0.0.0 --port 8080 &
+    uv run python app/main.py
     ```
 
 4. **Start Caddy:**
@@ -271,13 +275,13 @@ This application can be self-hosted using a reverse proxy like Caddy or Nginx. T
     Start the Caddy service:
 
     ```bash
-    brew services start caddy
+    caddy run --config Caddyfile
     ```
 
-    To restart the service after making changes to the `Caddyfile`:
+    Or run as a background service:
 
     ```bash
-    brew services restart caddy
+    brew services start caddy
     ```
 
 Your application will now be available at `http://localhost` (or your domain).
@@ -285,12 +289,11 @@ Your application will now be available at `http://localhost` (or your domain).
 ### Performance Testing
 
 ```bash
-# Test cache performance
-curl -w "@curl-format.txt" http://localhost:8080/blog
+# Test response times
+curl -w "Total time: %{time_total}s\n" http://localhost:8080/blog
 
 # Monitor memory usage
 ps aux | grep nicegui-blog
-
 ```
 
 ## Technology & Features

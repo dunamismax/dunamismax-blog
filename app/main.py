@@ -106,7 +106,7 @@ def add_global_styles() -> None:
         <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css\">
         <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">
         <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>
-        <link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap\" rel=\"stylesheet\">
+        <link href=\"https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=JetBrains+Mono:ital,wght@0,400..800;1,400..800&display=swap\" rel=\"stylesheet\">
         <link rel=\"stylesheet\" href=\"/static/syntax.css\">
         <link rel=\"stylesheet\" href=\"/static/blog.css\">
 
@@ -134,9 +134,11 @@ def add_global_styles() -> None:
         <meta name=\"twitter:title\" content=\"NiceGUI Blog\">
         <meta name=\"twitter:description\" content=\"Modern Python blog with dark theme and lightning-fast performance\">
 
-        <!-- Enhanced JavaScript for scroll-to-top button -->
+        <!-- Enhanced JavaScript for scroll-to-top button and performance optimizations -->
         <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Throttled scroll handler for better performance
+            let scrollTimeout;
             function toggleScrollButton() {
                 const scrollButton = document.querySelector('.scroll-to-top');
                 if (scrollButton) {
@@ -148,10 +150,19 @@ def add_global_styles() -> None:
                 }
             }
 
-            window.addEventListener('scroll', toggleScrollButton);
+            function throttledScroll() {
+                if (!scrollTimeout) {
+                    scrollTimeout = requestAnimationFrame(() => {
+                        toggleScrollButton();
+                        scrollTimeout = null;
+                    });
+                }
+            }
+
+            window.addEventListener('scroll', throttledScroll, { passive: true });
             toggleScrollButton(); // Initial check
 
-            // Add lazy loading support
+            // Enhanced lazy loading with error handling
             if ('IntersectionObserver' in window) {
                 const imageObserver = new IntersectionObserver((entries, observer) => {
                     entries.forEach(entry => {
@@ -161,12 +172,85 @@ def add_global_styles() -> None:
                             observer.unobserve(img);
                         }
                     });
+                }, {
+                    rootMargin: '10px'
                 });
 
                 document.querySelectorAll('img[loading="lazy"]').forEach(img => {
                     imageObserver.observe(img);
+
+                    // Add error handling for broken images
+                    img.addEventListener('error', () => {
+                        img.style.display = 'none';
+                    });
                 });
             }
+
+            // Preload critical resources
+            const criticalImages = document.querySelectorAll('img[priority="high"]');
+            criticalImages.forEach(img => {
+                const link = document.createElement('link');
+                link.rel = 'preload';
+                link.as = 'image';
+                link.href = img.src;
+                document.head.appendChild(link);
+            });
+
+            // Add copy buttons to code blocks
+            function addCopyButtons() {
+                const codeBlocks = document.querySelectorAll('pre.highlight, .highlight pre, pre:has(code)');
+                codeBlocks.forEach(pre => {
+                    // Skip if copy button already exists
+                    if (pre.querySelector('.copy-button')) return;
+
+                    const button = document.createElement('button');
+                    button.className = 'copy-button';
+                    button.innerHTML = `
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                    `;
+                    button.title = 'Copy code';
+
+                    button.addEventListener('click', async () => {
+                        const code = pre.querySelector('code') || pre;
+                        const text = code.textContent || code.innerText;
+
+                        try {
+                            await navigator.clipboard.writeText(text);
+                            button.classList.add('copied');
+                            button.innerHTML = `
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20,6 9,17 4,12"></polyline>
+                                </svg>
+                            `;
+                            setTimeout(() => {
+                                button.classList.remove('copied');
+                                button.innerHTML = `
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                `;
+                            }, 2000);
+                        } catch (err) {
+                            console.error('Failed to copy code:', err);
+                        }
+                    });
+
+                    // Style the pre element to position the button
+                    pre.style.position = 'relative';
+                    pre.appendChild(button);
+                });
+            }
+
+            // Initial load
+            addCopyButtons();
+
+            // Re-run when content changes (for dynamic content)
+            const observer = new MutationObserver(addCopyButtons);
+            observer.observe(document.body, { childList: true, subtree: true });
         });
         </script>
     """,
@@ -580,12 +664,25 @@ def blog_post(slug: str) -> None:
                 with ui.row().classes("gap-2"):
 
                     async def do_share() -> None:
+                        """Share the current post or copy link to clipboard."""
                         js = (
-                            "if (navigator.share){navigator.share({title: document.title, url: window.location.href});}"
-                            "else{navigator.clipboard.writeText(window.location.href);}"
+                            "if (navigator.share && navigator.canShare) {"
+                            "  try {"
+                            "    await navigator.share({title: document.title, url: window.location.href});"
+                            "  } catch (e) {"
+                            "    if (e.name !== 'AbortError') {"
+                            "      await navigator.clipboard.writeText(window.location.href);"
+                            "      return 'copied';"
+                            "    }"
+                            "  }"
+                            "} else {"
+                            "  await navigator.clipboard.writeText(window.location.href);"
+                            "  return 'copied';"
+                            "}"
                         )
-                        await ui.run_javascript(js)
-                        ui.notify("Link copied to clipboard")
+                        result = await ui.run_javascript(js)
+                        if result == "copied":
+                            ui.notify("Link copied to clipboard", type="positive")
 
                     ui.button("Share", icon="share", on_click=do_share).props(
                         "flat size=sm"
@@ -694,6 +791,6 @@ if __name__ in {"__main__", "__mp_main__"}:
         port=8080,
         show_welcome_message=False,
         reload=True,
-        favicon="https://nicegui.io/favicon.ico",
+        favicon="static/favicon/favicon.ico",
         dark=True,
     )

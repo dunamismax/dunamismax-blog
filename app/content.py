@@ -91,11 +91,16 @@ def get_last_modified(md_file: Path) -> datetime:
             capture_output=True,
             text=True,
             check=True,
+            timeout=5,  # Add timeout for better reliability
         )
         iso_ts = result.stdout.strip()
         if iso_ts:
             return datetime.fromisoformat(iso_ts).replace(tzinfo=None)
-    except (subprocess.CalledProcessError, FileNotFoundError):
+    except (
+        subprocess.CalledProcessError,
+        FileNotFoundError,
+        subprocess.TimeoutExpired,
+    ):
         logger.debug("Git metadata unavailable for %s", md_file)
     return datetime.fromtimestamp(md_file.stat().st_mtime)
 
@@ -154,6 +159,11 @@ def get_all_posts() -> list[dict[str, Any]]:
                 try:
                     fmt = "%m/%d/%Y"
                     if time_str:
+                        # Handle YAML time parsing: convert integer minutes to HH:MM format
+                        if isinstance(time_str, int):
+                            hours = time_str // 60
+                            minutes = time_str % 60
+                            time_str = f"{hours:02d}:{minutes:02d}"
                         metadata["date"] = datetime.strptime(
                             f"{date_str} {time_str}", f"{fmt} %H:%M"
                         )
@@ -361,6 +371,11 @@ def get_post_by_slug(slug: str) -> dict[str, Any] | None:
             try:
                 fmt = "%m/%d/%Y"
                 if time_str:
+                    # Handle YAML time parsing: convert integer minutes to HH:MM format
+                    if isinstance(time_str, int):
+                        hours = time_str // 60
+                        minutes = time_str % 60
+                        time_str = f"{hours:02d}:{minutes:02d}"
                     metadata["date"] = datetime.strptime(
                         f"{date_str} {time_str}", f"{fmt} %H:%M"
                     )

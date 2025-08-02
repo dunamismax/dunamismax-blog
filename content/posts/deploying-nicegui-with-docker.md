@@ -1,7 +1,7 @@
 ---
 title: Deploying NiceGUI with Docker
 date: 8/2/2025
-time: 03:10
+time: 14:40
 summary: Package and run NiceGUI applications in lightweight Docker containers using
   modern Python tooling.
 tags:
@@ -83,4 +83,3 @@ Compose files also support named volumes, secrets, and multiple services. You co
 ## Conclusion
 
 Docker packages your NiceGUI app with everything it needs, simplifying deployment to cloud providers or on-prem servers. Pair it with `TTLCache` for snappy performance and you'll have a portable, fast, dark-themed web interface. With a solid container strategy, you can roll out updates confidently and keep environments in sync across your team.
-

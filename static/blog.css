@@ -1,28 +1,68 @@
 :root {
-            --pico-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            /* Modern font stack with optimized performance */
+            --pico-font-family: 'Inter', ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI Variable', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
             --pico-font-size: 18px;
-            --pico-line-height: 1.33;
-            --code-font-family: 'JetBrains Mono', monospace;
+            --pico-line-height: 1.6;
+            --code-font-family: 'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Monaco, Consolas, monospace;
 
-            /* Dark theme color scheme */
-            --dark-bg: #1E1E2E;
-            --purple-accent: #713A90;
-            --orange-accent: #D77757;
-            --text-primary: #FFFFFF;
-            --text-secondary: #B4B4B4;
-            --card-bg: #2A2A3E;
-            --border-color: #3A3A4E;
+            /* Enhanced dark theme color palette with improved accessibility */
+            --dark-bg: #0D1117;
+            --dark-bg-secondary: #161B22;
+            --purple-accent: #8B5CF6;
+            --purple-accent-hover: #A78BFA;
+            --orange-accent: #F97316;
+            --orange-accent-hover: #FB923C;
+            --text-primary: #F0F6FC;
+            --text-secondary: #8B949E;
+            --text-muted: #6E7681;
+            --card-bg: #21262D;
+            --card-bg-hover: #30363D;
+            --border-color: #30363D;
+            --border-color-hover: #484F58;
+            
+            /* Modern spacing scale */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            
+            /* Modern shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            
+            /* Animation easing */
+            --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
         }
 
-        /* Force dark theme */
+        /* Modern dark theme integration with Pico.css v2 */
         [data-theme="dark"],
         :root:not([data-theme="light"]) {
             --pico-background-color: var(--dark-bg);
             --pico-color: var(--text-primary);
             --pico-card-background-color: var(--card-bg);
+            --pico-card-sectioning-background-color: var(--card-bg-hover);
             --pico-border-color: var(--border-color);
             --pico-primary: var(--purple-accent);
+            --pico-primary-hover: var(--purple-accent-hover);
             --pico-secondary: var(--orange-accent);
+            --pico-secondary-hover: var(--orange-accent-hover);
+            --pico-muted-color: var(--text-muted);
+            --pico-muted-border-color: var(--border-color);
+            
+            /* Enhanced form controls */
+            --pico-form-element-background-color: var(--card-bg);
+            --pico-form-element-border-color: var(--border-color);
+            --pico-form-element-focus-color: var(--purple-accent);
+            --pico-form-element-placeholder-color: var(--text-muted);
+            
+            /* Modern button styling */
+            --pico-button-box-shadow: var(--shadow-sm);
+            --pico-button-hover-box-shadow: var(--shadow-md);
         }
 
         body {
@@ -32,17 +72,34 @@
             background-color: var(--dark-bg);
             color: var(--text-primary);
             overflow-x: hidden;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
         }
 
         code, pre, .highlight {
             font-family: var(--code-font-family) !important;
         }
 
-        /* Modern header styling */
+        /* Modern header styling with enhanced gradients */
         .bg-gradient-header {
-            background: linear-gradient(135deg, var(--dark-bg) 0%, rgba(113, 58, 144, 0.1) 50%, var(--dark-bg) 100%);
+            background: linear-gradient(135deg, var(--dark-bg) 0%, rgba(139, 92, 246, 0.08) 30%, rgba(249, 115, 22, 0.04) 70%, var(--dark-bg) 100%);
             border-bottom: 1px solid var(--border-color);
-            margin-bottom: 2rem;
+            margin-bottom: var(--spacing-xl);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bg-gradient-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
+            pointer-events: none;
         }
 
         .modern-blog-header {
@@ -91,15 +148,38 @@
         }
 
         .blog-post-card {
-            margin-bottom: 1.5rem;
-            transition: box-shadow 0.2s ease;
-            background-color: var(--card-bg);
+            margin-bottom: var(--spacing-lg);
+            transition: all 0.3s var(--ease-out);
+            background: var(--card-bg);
             border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .blog-post-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--purple-accent), var(--orange-accent));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s var(--ease-out);
         }
 
         .blog-post-card:hover {
-            box-shadow: 0 8px 25px rgba(113, 58, 144, 0.2);
-            border-color: var(--purple-accent);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--border-color-hover);
+            background: var(--card-bg-hover);
+        }
+        
+        .blog-post-card:hover::before {
+            transform: scaleX(1);
         }
 
         .blog-post-meta {
@@ -416,6 +496,47 @@
             box-shadow: 0 4px 20px rgba(113, 58, 144, 0.15);
         }
 
+        /* Copy button styling */
+        .copy-button {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: rgba(113, 58, 144, 0.8) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 0.375rem !important;
+            padding: 0.5rem !important;
+            cursor: pointer !important;
+            opacity: 0;
+            transition: all 0.2s ease !important;
+            backdrop-filter: blur(4px);
+            font-size: 0 !important;
+            width: 2rem !important;
+            height: 2rem !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 10;
+        }
+
+        .copy-button:hover {
+            background: var(--purple-accent) !important;
+            transform: scale(1.05) !important;
+        }
+
+        .copy-button.copied {
+            background: var(--orange-accent) !important;
+        }
+
+        pre:hover .copy-button,
+        .highlight:hover .copy-button {
+            opacity: 1;
+        }
+
+        .copy-button svg {
+            flex-shrink: 0;
+        }
+
         /* Link hover effects */
         .blog-content a {
             position: relative;
@@ -432,6 +553,101 @@
         .q-btn {
             font-weight: 500 !important;
             letter-spacing: 0.025em !important;
+        }
+
+        /* Enhanced blog post typography */
+        .blog-content h1:first-child {
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        .blog-content h2 {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .blog-content h3 {
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--orange-accent);
+        }
+
+        .blog-content h4, .blog-content h5, .blog-content h6 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        /* Enhanced paragraph spacing */
+        .blog-content p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        /* Enhanced lists */
+        .blog-content ul, .blog-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+
+        .blog-content li {
+            margin-bottom: 0.5rem;
+            line-height: 1.7;
+        }
+
+        /* Enhanced blockquotes */
+        .blog-content blockquote {
+            border-left: 4px solid var(--purple-accent);
+            background: rgba(113, 58, 144, 0.1);
+            margin: 2rem 0;
+            padding: 1rem 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        /* Enhanced tables */
+        .blog-content table {
+            border-collapse: collapse;
+            margin: 2rem 0;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .blog-content th, .blog-content td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .blog-content th {
+            background: var(--purple-accent);
+            color: white;
+            font-weight: 600;
+        }
+
+        .blog-content tr:hover {
+            background: rgba(113, 58, 144, 0.05);
+        }
+
+        /* Code span styling */
+        .blog-content code:not(pre code) {
+            background: var(--card-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.9em;
+            color: var(--orange-accent);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Enhanced hr styling */
+        .blog-content hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--purple-accent), transparent);
+            margin: 3rem 0;
         }
 
         /* Loading states */
