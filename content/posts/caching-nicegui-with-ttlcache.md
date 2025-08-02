@@ -1,6 +1,6 @@
 ---
 title: "Boosting NiceGUI Performance with TTLCache"
-date: "8/1/2025"
+date: "8/20/2025"
 summary: "Speed up repeated NiceGUI computations by storing results in cachetools.TTLCache."
 tags: ["nicegui", "cache", "performance", "python", "tutorial"]
 ---

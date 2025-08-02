@@ -1,6 +1,6 @@
 ---
 title: "Bulletproof NiceGUI: Testing with Pytest"
-date: "8/1/2025"
+date: "9/1/2025"
 summary: "Learn how to verify your NiceGUI pages and utilities using pytest and a few handy helpers."
 tags: ["nicegui", "pytest", "testing", "python"]
 ---

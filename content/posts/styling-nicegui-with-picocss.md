@@ -1,6 +1,6 @@
 ---
 title: "Styling NiceGUI with Pico.css"
-date: "8/1/2025"
+date: "8/12/2025"
 summary: "Enhance NiceGUI interfaces with Pico.css, global CSS variables, and component classes." 
 tags: ["nicegui", "css", "pico", "styling", "tutorial"]
 ---
