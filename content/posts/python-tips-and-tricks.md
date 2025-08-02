@@ -173,3 +173,4 @@ def create_user(user: User) -> None:
 `TypedDict` enforces required keys and types at static analysis time without incurring runtime overhead.
 
 Happy coding!
+

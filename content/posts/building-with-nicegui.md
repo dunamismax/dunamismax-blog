@@ -135,3 +135,4 @@ PyInstaller bundles the interpreter and your code into a single executable that 
 ## Conclusion
 
 NiceGUI lowers the barrier to building modern, interactive web applications. With dark mode support, a Pythonic API, and seamless integration with FastAPI, it is a compelling choice for dashboards, internal tools, and prototypes. With thoughtful state management and a straightforward deployment story, NiceGUI helps teams deliver polished interfaces quickly. Give it a try for your next project and see how far pure Python can take you.
+

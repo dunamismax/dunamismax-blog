@@ -15,13 +15,19 @@ from pygments.formatters import HtmlFormatter
 
 from app.content import get_all_posts, get_post_by_slug
 
+POSTS_CACHE_TTL = 600
+CONTENT_CACHE_TTL = 1200
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Memory-based cache for posts (TTL: 10 minutes)
-posts_cache: TTLCache[str, list[dict[str, Any]]] = TTLCache(maxsize=100, ttl=600)
-content_cache: TTLCache[str, dict[str, Any]] = TTLCache(maxsize=50, ttl=1200)
+posts_cache: TTLCache[str, list[dict[str, Any]]] = TTLCache(
+    maxsize=100, ttl=POSTS_CACHE_TTL
+)
+content_cache: TTLCache[str, dict[str, Any]] = TTLCache(
+    maxsize=50, ttl=CONTENT_CACHE_TTL
+)
 
 # Current list of posts shown on the index page
 filtered_posts: list[dict[str, Any]] = []
@@ -85,8 +91,7 @@ def generate_syntax_highlighting_css() -> None:
 
     css_file = static_dir / "syntax.css"
     try:
-        with open(css_file, "w", encoding="utf-8") as f:
-            f.write(css_content)
+        css_file.write_text(css_content, encoding="utf-8")
         logger.info("Generated syntax highlighting CSS: %s", css_file)
     except OSError as e:
         logger.error("Failed to generate syntax CSS: %s", e)
@@ -229,7 +234,7 @@ def create_search_bar() -> ui.element:
             .props("borderless dense standout")
             .classes("modern-search-input w-full")
         )
-        search_input.props("prepend-icon=search")
+        search_input.props("prepend-icon=search aria-label=Search posts")
     return search_container
 
 
@@ -256,31 +261,31 @@ def apply_filter(query: str, posts: list[dict[str, Any]]) -> list[dict[str, Any]
     """Return posts that match a query in title, summary, or tags."""
     if not query:
         return posts
-    q = query.lower()
+    q = query.casefold()
     return [
         post
         for post in posts
-        if q in post.get("title", "").lower()
-        or q in post.get("summary", "").lower()
-        or any(q in tag.lower() for tag in post.get("tags", []))
+        if q in post.get("title", "").casefold()
+        or q in post.get("summary", "").casefold()
+        or any(q in tag.casefold() for tag in post.get("tags", []))
     ]
 
 
 def filter_posts_by_tag(tag: str, posts: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Return posts that contain a specific tag."""
-    t = tag.lower()
-    return [post for post in posts if t in [p.lower() for p in post.get("tags", [])]]
+    t = tag.casefold()
+    return [post for post in posts if t in [p.casefold() for p in post.get("tags", [])]]
 
 
 def filter_posts_by_tags(
     tags: list[str], posts: list[dict[str, Any]]
 ) -> list[dict[str, Any]]:
     """Return posts that contain any of the specified tags."""
-    tag_set = {t.lower() for t in tags}
+    tag_set = {t.casefold() for t in tags}
     if not tag_set:
         return posts
     return [
-        post for post in posts if tag_set & {p.lower() for p in post.get("tags", [])}
+        post for post in posts if tag_set & {p.casefold() for p in post.get("tags", [])}
     ]
 
 

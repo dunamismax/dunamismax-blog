@@ -84,3 +84,4 @@ Handle network errors gracefully by wrapping calls in `try`/`except` blocks and 
 ## Conclusion
 
 Strategic caching is one of the quickest ways to improve perceived speed. `TTLCache` keeps your NiceGUI interface snappy while ensuring users always see relatively fresh data. Combine it with async tasks and `ui.notify` to provide responsive feedback when data refreshes. Thoughtful cache policies lead to fewer database hits, lower latency, and happier users.
+

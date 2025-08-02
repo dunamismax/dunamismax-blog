@@ -46,3 +46,4 @@ ui.button('Save', on_click=lambda: ui.notify('Saved!', type='positive'))
 ## Delight Through Detail
 
 These tiny touches make a big impression. Experiment with classes like `animate-bounce` or subtle color shifts to give your NiceGUI interfaces personality.
+
