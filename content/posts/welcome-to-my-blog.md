@@ -1,7 +1,7 @@
 ---
 title: Welcome to My Modern NiceGUI Blog
 date: 8/2/2025
-time: 03:09
+time: 03:19
 summary: An introduction to a lightning-fast NiceGUI blog built with a dark theme,
   caching, and modern Python tooling.
 tags:
