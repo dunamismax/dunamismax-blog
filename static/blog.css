@@ -251,6 +251,17 @@
             opacity: 0.7 !important;
         }
 
+        /* Ensure focus ring has rounded corners */
+        .modern-search-input .q-field__control,
+        .modern-search-input .q-field__control::before,
+        .modern-search-input .q-field__control::after {
+            border-radius: 0.75rem !important;
+        }
+
+        .modern-search-input .q-field__control {
+            overflow: hidden;
+        }
+
         /* Search icon styling */
         .modern-search-input .q-icon {
             color: var(--purple-accent) !important;
