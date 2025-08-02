@@ -138,7 +138,10 @@ def clear_cache() -> None:
 async def vitals_endpoint(request: Request) -> dict[str, str]:
     """Receive Web Vitals metrics from the browser."""
     data = await request.json()
-    logger.info("Web vitals: %s", data)
+    name = data.get("name", "unknown")
+    value = data.get("value")
+    rating = data.get("rating")
+    logger.info("Web vitals %s rating=%s value=%s", name, rating, value)
     return {"status": "ok"}
 
 
