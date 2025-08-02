@@ -1,6 +1,6 @@
 ---
 title: "Python 3.13 Tips and Tricks for Better Code"
-date: "8/1/2025"
+date: "8/5/2025"
 summary: "Fifteen practical Python 3.13 techniques for cleaner, more efficient code."
 tags: ["python", "tips", "best-practices", "python313", "coding", "tutorial"]
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Deploying NiceGUI with Docker"
-date: "8/1/2025"
+date: "8/25/2025"
 summary: "Package and run NiceGUI applications in lightweight Docker containers using modern Python tooling." 
 tags: ["nicegui", "docker", "deployment", "tutorial"]
 ---
