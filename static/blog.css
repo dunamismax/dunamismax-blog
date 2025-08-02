@@ -218,11 +218,6 @@
             justify-content: center;
         }
 
-        /* Hide problematic Quasar field control elements */
-        .modern-search-input .q-field__control.relative-position.row.no-wrap {
-            display: none !important;
-        }
-
         /* Style the modern search input */
         .modern-search-input {
             background-color: var(--card-bg) !important;
