@@ -3,12 +3,12 @@
 </p>
 
 <p align="center">
-  <strong><a href="https://blog.dunamismax.com/blog/micro-interactions-with-nicegui">Live Demo</a></strong>
+  <strong><a href="https://blog.dunamismax.com/">Live Demo</a></strong>
 </p>
 
 <p align="center">
   <a href="https://imgur.com/a/eza9YfP">
-    <img src="https://i.imgur.com/eza9YfP.gif" alt="NiceGUI Blog Demo" />
+    <img src="https://imgur.com/gallery/nicegui-blog-k2AnpMq#wpcbc9d" alt="NiceGUI Blog Demo GIF" />
   </a>
 </p>
 
