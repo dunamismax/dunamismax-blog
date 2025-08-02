@@ -228,7 +228,7 @@
 
         .search-container {
             position: relative;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -238,8 +238,8 @@
         .modern-search-input {
             background-color: var(--card-bg) !important;
             border: 1px solid var(--border-color) !important;
-            border-radius: 0.75rem !important;
-            padding: 0.75rem 1rem !important;
+            border-radius: 0.5rem !important;
+            padding: 0.5rem 0.75rem !important;
             font-family: var(--pico-font-family) !important;
             font-size: var(--pico-font-size) !important;
             color: var(--text-primary) !important;
@@ -249,8 +249,8 @@
         .modern-search-input:focus {
             border-color: var(--purple-accent) !important;
             box-shadow: 0 0 0 2px rgba(113, 58, 144, 0.2) !important;
-            border-radius: 0.75rem !important;
-            padding: 0.75rem 1rem !important;
+            border-radius: 0.5rem !important;
+            padding: 0.5rem 0.75rem !important;
             outline: none !important;
         }
 
@@ -271,7 +271,7 @@
         .modern-search-input .q-field__control,
         .modern-search-input .q-field__control::before,
         .modern-search-input .q-field__control::after {
-            border-radius: 0.75rem !important;
+            border-radius: 0.5rem !important;
         }
 
         .modern-search-input .q-field__control {
