@@ -31,7 +31,7 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
 
 <details>
 <summary style="cursor: pointer; padding: 12px; background: linear-gradient(135deg, #713A90, #E67E22); color: white; border-radius: 8px; text-align: center; font-weight: bold; margin: 8px 0; list-style: none;">
-  Click to view the blog in action ▼
+  Click to view the blog in action
 </summary>
 <div style="margin-top: 16px;">
 <p align="center">
