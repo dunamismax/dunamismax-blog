@@ -27,6 +27,8 @@ content_cache: TTLCache[str, dict[str, Any]] = TTLCache(maxsize=50, ttl=1200)
 filtered_posts: list[dict[str, Any]] = []
 current_page: int = 1
 posts_per_page: int = 5
+search_query: str = ""
+active_tags: list[str] = []
 
 
 def get_cached_posts() -> list[dict[str, Any]]:
@@ -232,11 +234,14 @@ def create_search_bar() -> ui.element:
 
 
 def filter_posts(query: str) -> None:
-    """Filter posts based on search query and refresh UI."""
-    global filtered_posts, current_page
+    """Filter posts based on search query and active tags, then refresh UI."""
+    global filtered_posts, current_page, search_query
     current_page = 1  # Reset to first page when filtering
+    search_query = query
     posts = get_cached_posts()
     filtered_posts_all = apply_filter(query, posts)
+    if active_tags:
+        filtered_posts_all = filter_posts_by_tags(active_tags, filtered_posts_all)
     filtered_posts, _ = get_paginated_posts(
         filtered_posts_all, current_page, posts_per_page
     )
@@ -265,6 +270,84 @@ def filter_posts_by_tag(tag: str, posts: list[dict[str, Any]]) -> list[dict[str,
     """Return posts that contain a specific tag."""
     t = tag.lower()
     return [post for post in posts if t in [p.lower() for p in post.get("tags", [])]]
+
+
+def filter_posts_by_tags(
+    tags: list[str], posts: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
+    """Return posts that contain any of the specified tags."""
+    tag_set = {t.lower() for t in tags}
+    if not tag_set:
+        return posts
+    return [
+        post for post in posts if tag_set & {p.lower() for p in post.get("tags", [])}
+    ]
+
+
+def update_tag_filter(selected: set[str]) -> None:
+    """Update active tag filter and refresh posts."""
+    global active_tags, filtered_posts, current_page
+    active_tags = list(selected)
+    current_page = 1
+    posts = get_cached_posts()
+    filtered_posts_all = apply_filter(search_query, posts)
+    if active_tags:
+        filtered_posts_all = filter_posts_by_tags(active_tags, filtered_posts_all)
+    filtered_posts, _ = get_paginated_posts(
+        filtered_posts_all, current_page, posts_per_page
+    )
+    render_posts.refresh()
+    create_pagination.refresh()
+
+
+def open_tags_dialog(tags: list[str]) -> None:
+    """Display a dialog with all tags and apply selection."""
+    dialog = ui.dialog()
+    selected = set(active_tags)
+    with dialog, ui.card().classes("p-4 min-w-[250px]"):
+        ui.label("Filter by Tags").classes("text-lg font-bold mb-2")
+        with ui.column().classes("gap-2"):
+            for tag in tags:
+                ui.checkbox(
+                    tag,
+                    value=tag in selected,
+                    on_change=lambda e, t=tag: (
+                        selected.add(t) if e.value else selected.discard(t),
+                        update_tag_filter(selected),
+                    ),
+                )
+        ui.button("Close", on_click=dialog.close).classes("mt-4")
+    dialog.open()
+
+
+def open_bookmarks_dialog() -> None:
+    """Display a dialog with bookmarked posts from local storage."""
+    dialog = ui.dialog()
+    with dialog, ui.card().classes("p-4 min-w-[250px]"):
+        ui.label("Bookmarked Posts").classes("text-lg font-bold mb-2")
+        container = ui.column().classes("gap-2")
+        ui.button("Close", on_click=dialog.close).classes("mt-4")
+
+    async def populate() -> None:
+        slugs = await ui.run_javascript(
+            "JSON.parse(localStorage.getItem('bookmarks') || '[]')",
+            timeout=1,
+        )
+        posts = get_cached_posts()
+        bookmark_posts = [p for p in posts if p["slug"] in slugs]
+        container.clear()
+        if bookmark_posts:
+            for p in bookmark_posts:
+                ui.link(
+                    p.get("title", "Untitled"),
+                    f"/blog/{p['slug']}",
+                    new_tab=False,
+                ).classes("no-underline")
+        else:
+            ui.label("No bookmarks yet").classes("opacity-70")
+
+    dialog.open()
+    ui.timer(0.1, populate, once=True)
 
 
 def get_paginated_posts(
@@ -300,10 +383,10 @@ def change_page(new_page: int) -> None:
     global current_page, filtered_posts
     current_page = new_page
 
-    # Re-apply current filter with new pagination
     posts = get_cached_posts()
-    search_query = ""  # We'd need to track this separately in a real implementation
     filtered_posts_all = apply_filter(search_query, posts)
+    if active_tags:
+        filtered_posts_all = filter_posts_by_tags(active_tags, filtered_posts_all)
     filtered_posts, _ = get_paginated_posts(
         filtered_posts_all, current_page, posts_per_page
     )
@@ -338,6 +421,49 @@ def create_blog_stats(posts: list[dict[str, Any]]) -> ui.element:
             )
             ui.label("Min Read").classes("text-sm opacity-70")
     return stats_card
+
+
+def create_meta_cards(posts: list[dict[str, Any]]) -> ui.element:
+    """Create a row of meta cards for stats, tags, and bookmarks."""
+    unique_tags = sorted({tag for post in posts for tag in post.get("tags", [])})
+    with ui.row().classes("w-full justify-center gap-4 mb-6") as meta_row:
+        create_blog_stats(posts)
+
+        with (
+            ui.card().classes(
+                "blog-stats w-full max-w-md cursor-pointer",
+            ) as tags_card,
+            ui.column().classes("items-center"),
+        ):
+            ui.label(str(len(unique_tags))).classes("text-2xl font-bold").style(
+                "color: var(--purple-accent)"
+            )
+            ui.label("Tags").classes("text-sm opacity-70")
+        tags_card.on("click", lambda: open_tags_dialog(unique_tags))
+
+        with (
+            ui.card().classes(
+                "blog-stats w-full max-w-md cursor-pointer",
+            ) as bookmarks_card,
+            ui.column().classes("items-center"),
+        ):
+            bookmark_count = (
+                ui.label("0")
+                .classes("text-2xl font-bold")
+                .style("color: var(--orange-accent)")
+            )
+            ui.label("Bookmarks").classes("text-sm opacity-70")
+        bookmarks_card.on("click", open_bookmarks_dialog)
+
+        async def set_bookmark_count() -> None:
+            count = await ui.run_javascript(
+                "JSON.parse(localStorage.getItem('bookmarks') || '[]').length",
+                timeout=1,
+            )
+            bookmark_count.text = str(count)
+
+        ui.timer(0.1, set_bookmark_count, once=True)
+    return meta_row
 
 
 @ui.refreshable
@@ -489,6 +615,8 @@ def blog_index(request: Request) -> None:
     add_global_styles()
 
     tag = request.query_params.get("tag", "")
+    global active_tags
+    active_tags = [tag] if tag else []
 
     with ui.column().classes("w-full items-center min-h-screen"):
         create_header()
@@ -510,7 +638,7 @@ def blog_index(request: Request) -> None:
                 create_search_bar()
 
             if posts:  # Show stats based on all posts, not just current page
-                create_blog_stats(posts)
+                create_meta_cards(posts)
 
             render_posts()
             create_pagination()
