@@ -30,7 +30,9 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
 </p>
 
 <details>
-<summary style="color: #E67E22; font-weight: 500;">Click to view the blog in action</summary>
+<summary>
+  <img src="https://img.shields.io/badge/Click_to_view_the_blog_in_action-E67E22.svg?style=for-the-badge&logo=image&logoColor=white" alt="Click to view the blog in action">
+</summary>
 <p align="center">
   <img src="https://github.com/dunamismax/images/blob/main/python/website-interaction-recording-high-quality.gif" alt="NiceGUI Blog Demo">
 </p>
