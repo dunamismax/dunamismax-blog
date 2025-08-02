@@ -3,16 +3,16 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import frontmatter
 import markdown
 
-if TYPE_CHECKING:
-    pass
+logger = logging.getLogger(__name__)
 
 
 def create_slug(filename: str) -> str:
@@ -73,11 +73,11 @@ async def load_post_async(md_file: Path) -> dict[str, Any] | None:
     """Asynchronously load a single post file with comprehensive error handling."""
     try:
         if not md_file.is_file():
-            print(f"Skipping non-file: {md_file}")
+            logger.warning("Skipping non-file: %s", md_file)
             return None
 
         if md_file.stat().st_size == 0:
-            print(f"Skipping empty file: {md_file}")
+            logger.warning("Skipping empty file: %s", md_file)
             return None
 
         # Use asyncio for file I/O
@@ -94,6 +94,11 @@ async def load_post_async(md_file: Path) -> dict[str, Any] | None:
         metadata["slug"] = create_slug(md_file.name)
         metadata["filename"] = md_file.name
 
+        content = post.content or ""
+        metadata["content"] = content
+        metadata["word_count"] = len(content.split())
+        metadata["read_time"] = max(1, metadata["word_count"] // 200)
+
         # Parse date with enhanced error handling
         if "date" in metadata:
             metadata["date"] = parse_date(metadata["date"], md_file)
@@ -102,8 +107,8 @@ async def load_post_async(md_file: Path) -> dict[str, Any] | None:
 
         return metadata
 
-    except Exception as e:
-        print(f"Error loading post {md_file}: {e}")
+    except Exception:
+        logger.exception("Error loading post %s", md_file)
         return None
 
 
@@ -125,17 +130,16 @@ def parse_date(date_value: Any, md_file: Path) -> datetime:
                 "%d/%m/%Y",
                 "%m/%d/%Y",
                 "%Y-%m-%d %H:%M:%S",
-                "%m/%d/%Y",  # 8/1/2025 format
             ]:
                 try:
                     return datetime.strptime(date_value, fmt)
                 except ValueError:
                     continue
 
-            print(f"Could not parse date '{date_value}' in {md_file}")
+            logger.warning("Could not parse date %r in %s", date_value, md_file)
             return datetime.fromtimestamp(md_file.stat().st_mtime)
 
-    print(f"Invalid date type in {md_file}: {type(date_value)}")
+    logger.error("Invalid date type in %s: %s", md_file, type(date_value))
     return datetime.fromtimestamp(md_file.stat().st_mtime)
 
 
@@ -150,26 +154,26 @@ def get_all_posts() -> list[dict[str, Any]]:
     posts = []
 
     if not posts_dir.exists():
-        print(f"Posts directory does not exist: {posts_dir}")
+        logger.warning("Posts directory does not exist: %s", posts_dir)
         return posts
 
     if not posts_dir.is_dir():
-        print(f"Posts path is not a directory: {posts_dir}")
+        logger.warning("Posts path is not a directory: %s", posts_dir)
         return posts
 
     md_files = list(posts_dir.glob("*.md"))
     if not md_files:
-        print(f"No Markdown files found in: {posts_dir}")
+        logger.warning("No Markdown files found in: %s", posts_dir)
         return posts
 
     for md_file in md_files:
         try:
             if not md_file.is_file():
-                print(f"Skipping non-file: {md_file}")
+                logger.warning("Skipping non-file: %s", md_file)
                 continue
 
             if md_file.stat().st_size == 0:
-                print(f"Skipping empty file: {md_file}")
+                logger.warning("Skipping empty file: %s", md_file)
                 continue
 
             with open(md_file, encoding="utf-8") as f:
@@ -180,6 +184,12 @@ def get_all_posts() -> list[dict[str, Any]]:
             metadata["slug"] = create_slug(md_file.name)
             metadata["filename"] = md_file.name
 
+            # Content metrics
+            content = post.content or ""
+            metadata["content"] = content
+            metadata["word_count"] = len(content.split())
+            metadata["read_time"] = max(1, metadata["word_count"] // 200)
+
             # Parse date with enhanced error handling
             if "date" in metadata:
                 metadata["date"] = parse_date(metadata["date"], md_file)
@@ -189,33 +199,33 @@ def get_all_posts() -> list[dict[str, Any]]:
             posts.append(metadata)
 
         except FileNotFoundError:
-            print(f"File not found: {md_file}")
+            logger.error("File not found: %s", md_file)
             continue
         except PermissionError:
-            print(f"Permission denied reading: {md_file}")
+            logger.error("Permission denied reading: %s", md_file)
             continue
         except UnicodeDecodeError as e:
-            print(f"Unicode decode error in {md_file}: {e}")
+            logger.error("Unicode decode error in %s: %s", md_file, e)
             continue
         except frontmatter.YAMLLoadError as e:
-            print(f"YAML frontmatter error in {md_file}: {e}")
+            logger.error("YAML frontmatter error in %s: %s", md_file, e)
             continue
         except OSError as e:
-            print(f"OS error reading {md_file}: {e}")
+            logger.error("OS error reading %s: %s", md_file, e)
             continue
-        except Exception as e:
-            print(f"Unexpected error loading {md_file}: {e}")
+        except Exception:
+            logger.exception("Unexpected error loading %s", md_file)
             continue
 
     # Sort by date (newest first) with error handling
     try:
         posts.sort(key=lambda x: x.get("date", datetime.min), reverse=True)
-    except Exception as e:
-        print(f"Error sorting posts: {e}")
+    except Exception:
+        logger.exception("Error sorting posts")
         # Fallback to filename sorting
         posts.sort(key=lambda x: x.get("filename", ""), reverse=True)
 
-    print(f"Successfully loaded {len(posts)} posts from {len(md_files)} files")
+    logger.info("Successfully loaded %d posts from %d files", len(posts), len(md_files))
     return posts
 
 
@@ -230,17 +240,17 @@ def get_post_by_slug(slug: str) -> dict[str, Any] | None:
         Dictionary containing post metadata and HTML content, or None if not found.
     """
     if not slug or not isinstance(slug, str):
-        print(f"Invalid slug provided: {slug}")
+        logger.warning("Invalid slug provided: %s", slug)
         return None
 
     posts_dir = Path("content/posts")
 
     if not posts_dir.exists():
-        print(f"Posts directory does not exist: {posts_dir}")
+        logger.warning("Posts directory does not exist: %s", posts_dir)
         return None
 
     if not posts_dir.is_dir():
-        print(f"Posts path is not a directory: {posts_dir}")
+        logger.warning("Posts path is not a directory: %s", posts_dir)
         return None
 
     # Find the post file by matching slug
@@ -251,16 +261,16 @@ def get_post_by_slug(slug: str) -> dict[str, Any] | None:
             break
 
     if not matching_file:
-        print(f"No post found with slug: {slug}")
+        logger.warning("No post found with slug: %s", slug)
         return None
 
     try:
         if not matching_file.is_file():
-            print(f"Path is not a file: {matching_file}")
+            logger.warning("Path is not a file: %s", matching_file)
             return None
 
         if matching_file.stat().st_size == 0:
-            print(f"Post file is empty: {matching_file}")
+            logger.warning("Post file is empty: %s", matching_file)
             return None
 
         with open(matching_file, encoding="utf-8") as f:
@@ -268,7 +278,9 @@ def get_post_by_slug(slug: str) -> dict[str, Any] | None:
 
         # Validate post content
         if not post.content and not post.metadata:
-            print(f"Post file contains no content or metadata: {matching_file}")
+            logger.warning(
+                "Post file contains no content or metadata: %s", matching_file
+            )
             return None
 
         # Configure Markdown with extensions for enhanced content processing
@@ -316,8 +328,8 @@ def get_post_by_slug(slug: str) -> dict[str, Any] | None:
                     },
                 },
             )
-        except Exception as e:
-            print(f"Error configuring Markdown processor: {e}")
+        except Exception:
+            logger.exception("Error configuring Markdown processor")
             # Fallback to basic markdown
             md = markdown.Markdown()
 
@@ -325,11 +337,15 @@ def get_post_by_slug(slug: str) -> dict[str, Any] | None:
         try:
             html_content = md.convert(post.content or "")
         except Exception as e:
-            print(f"Error converting markdown to HTML for {slug}: {e}")
+            logger.error("Error converting markdown to HTML for %s: %s", slug, e)
             html_content = f"<p>Error processing content: {e}</p>"
 
         # Validate and process metadata using new validation function
         metadata = validate_post_metadata(post.metadata or {}, matching_file.name)
+
+        content_text = post.content or ""
+        metadata["word_count"] = len(content_text.split())
+        metadata["read_time"] = max(1, metadata["word_count"] // 200)
 
         # Parse date with enhanced error handling
         if "date" in metadata:
@@ -344,24 +360,24 @@ def get_post_by_slug(slug: str) -> dict[str, Any] | None:
             **metadata,
         }
 
-        print(f"Successfully loaded post: {slug}")
+        logger.info("Successfully loaded post: %s", slug)
         return result
 
     except FileNotFoundError:
-        print(f"Post file not found: {matching_file}")
+        logger.error("Post file not found: %s", matching_file)
         return None
     except PermissionError:
-        print(f"Permission denied reading post: {matching_file}")
+        logger.error("Permission denied reading post: %s", matching_file)
         return None
     except UnicodeDecodeError as e:
-        print(f"Unicode decode error in post {slug}: {e}")
+        logger.error("Unicode decode error in post %s: %s", slug, e)
         return None
     except frontmatter.YAMLLoadError as e:
-        print(f"YAML frontmatter error in post {slug}: {e}")
+        logger.error("YAML frontmatter error in post %s: %s", slug, e)
         return None
     except OSError as e:
-        print(f"OS error reading post {slug}: {e}")
+        logger.error("OS error reading post %s: %s", slug, e)
         return None
-    except Exception as e:
-        print(f"Unexpected error loading post {slug}: {e}")
+    except Exception:
+        logger.exception("Unexpected error loading post %s", slug)
         return None

@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 import logging
-from functools import lru_cache
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import Any
 
 from cachetools import TTLCache
 from nicegui import app, ui
@@ -13,33 +12,28 @@ from pygments.formatters import HtmlFormatter
 
 from app.content import get_all_posts, get_post_by_slug
 
-if TYPE_CHECKING:
-    pass
-
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Memory-based cache for posts (TTL: 10 minutes)
-posts_cache = TTLCache(maxsize=100, ttl=600)
-content_cache = TTLCache(maxsize=50, ttl=1200)
+posts_cache: TTLCache[str, list[dict[str, Any]]] = TTLCache(maxsize=100, ttl=600)
+content_cache: TTLCache[str, dict[str, Any]] = TTLCache(maxsize=50, ttl=1200)
 
 
-@lru_cache(maxsize=1)
-def get_cached_posts() -> list[dict]:
+def get_cached_posts() -> list[dict[str, Any]]:
     """Get all posts with caching for improved performance."""
     cache_key = "all_posts"
-    if cache_key in posts_cache:
-        logger.info("Serving posts from cache")
+    try:
         return posts_cache[cache_key]
+    except KeyError:
+        posts = get_all_posts()
+        posts_cache[cache_key] = posts
+        logger.info(f"Cached {len(posts)} posts")
+        return posts
 
-    posts = get_all_posts()
-    posts_cache[cache_key] = posts
-    logger.info(f"Cached {len(posts)} posts")
-    return posts
 
-
-def get_cached_post(slug: str) -> dict | None:
+def get_cached_post(slug: str) -> dict[str, Any] | None:
     """Get a single post with caching for improved performance."""
     if slug in content_cache:
         logger.info(f"Serving post '{slug}' from cache")
@@ -56,7 +50,6 @@ def clear_cache() -> None:
     """Clear all caches - useful for development or content updates."""
     posts_cache.clear()
     content_cache.clear()
-    get_cached_posts.cache_clear()
     logger.info("All caches cleared")
 
 
@@ -74,9 +67,9 @@ def generate_syntax_highlighting_css() -> None:
     try:
         with open(css_file, "w", encoding="utf-8") as f:
             f.write(css_content)
-        print(f"Generated syntax highlighting CSS: {css_file}")
+        logger.info("Generated syntax highlighting CSS: %s", css_file)
     except OSError as e:
-        print(f"Failed to generate syntax CSS: {e}")
+        logger.error("Failed to generate syntax CSS: %s", e)
 
 
 def add_global_styles() -> None:
@@ -389,7 +382,7 @@ def create_blog_stats(posts: list) -> ui.element:
             ui.label("Posts").classes("text-sm opacity-70")
 
         with ui.column().classes("items-center"):
-            total_words = sum(len(post.get("content", "").split()) for post in posts)
+            total_words = sum(post.get("word_count", 0) for post in posts)
             ui.label(f"{total_words:,}").classes("text-2xl font-bold").style(
                 "color: var(--orange-accent)"
             )
@@ -464,8 +457,10 @@ def blog_index() -> None:
                                     ).classes("blog-post-meta text-sm opacity-70")
 
                                 # Reading time estimation
-                                word_count = len(post.get("content", "").split())
-                                read_time = max(1, word_count // 200)
+                                word_count = post.get("word_count", 0)
+                                read_time = post.get(
+                                    "read_time", max(1, word_count // 200)
+                                )
                                 ui.label(f"{read_time} min read").classes(
                                     "text-sm opacity-60"
                                 )
