@@ -218,11 +218,6 @@
             justify-content: center;
         }
 
-        /* Hide problematic Quasar field control elements */
-        .modern-search-input .q-field__control.relative-position.row.no-wrap {
-            display: none !important;
-        }
-
         /* Style the modern search input */
         .modern-search-input {
             background-color: var(--card-bg) !important;
@@ -252,6 +247,17 @@
         .modern-search-input input::placeholder {
             color: var(--text-secondary) !important;
             opacity: 0.7 !important;
+        }
+
+        /* Ensure focus ring has rounded corners */
+        .modern-search-input .q-field__control,
+        .modern-search-input .q-field__control::before,
+        .modern-search-input .q-field__control::after {
+            border-radius: 0.75rem !important;
+        }
+
+        .modern-search-input .q-field__control {
+            overflow: hidden;
         }
 
         /* Search icon styling */
