@@ -533,7 +533,7 @@ def blog_post(slug: str) -> None:
                     "opacity-80 mb-4"
                 )
                 ui.button(
-                    "← Back to Blog", on_click=lambda: ui.navigate.to("/blog")
+                    "Back to Blog", on_click=lambda: ui.navigate.to("/blog")
                 ).props("flat icon=arrow_back").style("color: var(--purple-accent)")
 
             create_footer()
@@ -547,7 +547,7 @@ def blog_post(slug: str) -> None:
             ui.column().classes("max-w-4xl w-full px-4"),
         ):
             # Navigation back button
-            ui.button("← Back to Blog", on_click=lambda: ui.navigate.to("/blog")).props(
+            ui.button("Back to Blog", on_click=lambda: ui.navigate.to("/blog")).props(
                 "flat icon=arrow_back"
             ).classes("mb-6 self-start")
 
