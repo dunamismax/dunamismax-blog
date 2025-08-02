@@ -1,13 +1,13 @@
 ---
 title: "Python 3.13 Tips and Tricks for Better Code"
 date: "8/1/2025"
-summary: "Practical Python 3.13 techniques to write clean, efficient, and readable code."
+summary: "Fifteen practical Python 3.13 techniques for cleaner, more efficient code."
 tags: ["python", "tips", "best-practices", "python313", "coding", "tutorial"]
 ---
 
 # Python Tips and Tricks for Better Code
 
-Python's readability hides a wealth of powerful features. Here are ten tips to level up your code.
+Python's readability hides a wealth of powerful features. Here are fifteen tips to level up your code and take advantage of improvements in Python 3.13.
 
 ## 1. Use enumerate instead of range
 
@@ -95,6 +95,59 @@ def has_positive(nums: list[int]) -> bool:
 
 def all_positive(nums: list[int]) -> bool:
     return all(n > 0 for n in nums)
+```
+
+## 11. Pattern Matching for Cleaner Logic
+
+```python
+def handle(event: dict) -> str:
+    match event:
+        case {"type": "click", "x": x, "y": y}:
+            return f"clicked at {x},{y}"
+        case {"type": "close"}:
+            return "closed"
+        case _:
+            return "unknown"
+```
+
+## 12. walrus operator for inline assignments
+
+```python
+if (line := input().strip()) != "":
+    print(f"You entered {line}")
+```
+
+## 13. pathlib's glob patterns
+
+```python
+from pathlib import Path
+for py_file in Path('.').glob('**/*.py'):
+    print(py_file)
+```
+
+## 14. Using `functools.cache` for pure functions
+
+```python
+from functools import cache
+
+@cache
+def fibonacci(n: int) -> int:
+    if n < 2:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+```
+
+## 15. TypedDict for structured dictionaries
+
+```python
+from typing import TypedDict
+
+class User(TypedDict):
+    id: int
+    name: str
+
+def create_user(user: User) -> None:
+    print(user['name'])
 ```
 
 Happy coding!
