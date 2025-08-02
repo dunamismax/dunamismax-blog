@@ -563,7 +563,7 @@ def blog_post(slug: str) -> None:
                     )
 
             # Article content with improved styling
-            ui.html(post["content"]).classes("blog-content prose prose-lg max-w-none")
+            ui.html(post["content"]).classes("blog-content prose prose-lg")
 
             # Article footer with tags and sharing
             with ui.row().classes(
