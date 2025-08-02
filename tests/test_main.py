@@ -4,7 +4,12 @@ from typing import Any
 
 from starlette.requests import Request
 
-from app.main import apply_filter, filter_posts_by_tag, is_admin_authorized
+from app.main import (
+    apply_filter,
+    filter_posts_by_tag,
+    filter_posts_by_tags,
+    is_admin_authorized,
+)
 
 
 def make_request(query: str = "") -> Request:
@@ -44,3 +49,18 @@ def test_filter_posts_by_tag() -> None:
     ]
     assert filter_posts_by_tag("python", posts) == [posts[0]]
     assert filter_posts_by_tag("unknown", posts) == []
+
+
+def test_filter_posts_by_tags() -> None:
+    posts = [
+        {"title": "Python", "tags": ["dev", "python"]},
+        {"title": "Misc", "tags": ["misc"]},
+        {"title": "PyMisc", "tags": ["python", "misc"]},
+    ]
+    assert filter_posts_by_tags(["python"], posts) == [posts[0], posts[2]]
+    assert filter_posts_by_tags(["dev", "misc"], posts) == [
+        posts[0],
+        posts[1],
+        posts[2],
+    ]
+    assert filter_posts_by_tags(["unknown"], posts) == []
