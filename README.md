@@ -213,6 +213,63 @@ cd dist && nicegui-blog.exe        # Windows
 
 ### Performance Testing
 
+---
+
+## Deployment
+
+This application can be self-hosted using a reverse proxy like Caddy or Nginx. The following instructions are for a macOS environment using Caddy managed by Homebrew.
+
+### Prerequisites
+
+* **Homebrew:** The missing package manager for macOS.
+* **Caddy:** A powerful, enterprise-ready, open source web server with automatic HTTPS.
+
+### Setup Instructions
+
+1. **Install Caddy:**
+
+    ```bash
+    brew install caddy
+    ```
+
+2. **Create a Caddyfile:**
+
+    Create a file named `Caddyfile` in the root of the project directory with the following content:
+
+    ```
+    localhost {
+        reverse_proxy localhost:8080
+    }
+    ```
+
+    *Note: If you are using a domain, replace `localhost` with your domain name.*
+
+3. **Start the Application:**
+
+    Run the application using `uv`:
+
+    ```bash
+    uv run uvicorn app.main:app --host 0.0.0.0 --port 8080 &
+    ```
+
+4. **Start Caddy:**
+
+    Start the Caddy service:
+
+    ```bash
+    brew services start caddy
+    ```
+
+    To restart the service after making changes to the `Caddyfile`:
+
+    ```bash
+    brew services restart caddy
+    ```
+
+Your application will now be available at `http://localhost` (or your domain).
+
+### Performance Testing
+
 ```bash
 # Test cache performance
 curl -w "@curl-format.txt" http://localhost:8080/blog

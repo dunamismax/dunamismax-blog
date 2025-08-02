@@ -1,0 +1,3 @@
+lsv.dunamismax.com {
+    reverse_proxy localhost:8080
+}
