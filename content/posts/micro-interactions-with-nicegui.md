@@ -1,8 +1,13 @@
 ---
-title: "Tiny Touches: Micro-Interactions in NiceGUI"
-date: "8/8/2025"
-summary: "Add playful animations and feedback to make your NiceGUI apps feel alive."
-tags: ["nicegui", "ui", "animations", "tips"]
+title: 'Tiny Touches: Micro-Interactions in NiceGUI'
+date: 8/2/2025
+time: 03:05
+summary: Add playful animations and feedback to make your NiceGUI apps feel alive.
+tags:
+- nicegui
+- ui
+- animations
+- tips
 ---
 
 # Tiny Touches: Micro-Interactions in NiceGUI

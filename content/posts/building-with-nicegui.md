@@ -1,8 +1,16 @@
 ---
-title: "Building Modern Web Apps with NiceGUI v2.22.1"
-date: "8/15/2025"
-summary: "A tour of NiceGUI's Python-centric approach to building feature-rich web applications without touching JavaScript."
-tags: ["nicegui", "python", "web-development", "ui", "framework", "tutorial"]
+title: Building Modern Web Apps with NiceGUI v2.22.1
+date: 8/2/2025
+time: 03:08
+summary: A tour of NiceGUI's Python-centric approach to building feature-rich web
+  applications without touching JavaScript.
+tags:
+- nicegui
+- python
+- web-development
+- ui
+- framework
+- tutorial
 ---
 
 # Building Web Apps with NiceGUI

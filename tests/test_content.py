@@ -1,8 +1,6 @@
 """Tests for content management utilities."""
 
-import os
 import sys
-from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -61,20 +59,21 @@ def test_get_post_by_slug_sanitizes_html(tmp_path: Path) -> None:
         test_file.unlink(missing_ok=True)
 
 
-def test_dates_use_file_mtime(tmp_path: Path, monkeypatch) -> None:
-    """Post dates should reflect the file's last modified time."""
+def test_posts_sorted_by_frontmatter_time(tmp_path: Path, monkeypatch) -> None:
+    """Posts should be ordered by frontmatter date and time."""
     posts_dir = tmp_path / "content" / "posts"
     posts_dir.mkdir(parents=True)
-    md = posts_dir / "sample.md"
-    md.write_text(
-        "---\ntitle: Sample\ndate: 1/1/2000\n---\ncontent",
+    first = posts_dir / "first.md"
+    second = posts_dir / "second.md"
+    first.write_text(
+        "---\ntitle: First\ndate: 8/2/2025\ntime: 03:12\n---\ncontent",
         encoding="utf-8",
     )
-    mtime = 1_700_000_000
-    os.utime(md, (mtime, mtime))
+    second.write_text(
+        "---\ntitle: Second\ndate: 8/2/2025\ntime: 02:00\n---\ncontent",
+        encoding="utf-8",
+    )
     monkeypatch.chdir(tmp_path)
     posts = get_all_posts()
-    assert posts[0]["date"] == datetime.fromtimestamp(mtime)
-    post = get_post_by_slug("sample")
-    assert post is not None
-    assert post["date"] == datetime.fromtimestamp(mtime)
+    assert posts[0]["slug"] == "first"
+    assert posts[1]["slug"] == "second"
