@@ -3,6 +3,16 @@
 </p>
 
 <p align="center">
+  <strong><a href="https://blog.dunamismax.com/blog/micro-interactions-with-nicegui">Live Demo</a></strong>
+</p>
+
+<p align="center">
+  <a href="https://imgur.com/a/eza9YfP">
+    <img src="https://i.imgur.com/eza9YfP.gif" alt="NiceGUI Blog Demo" />
+  </a>
+</p>
+
+<p align="center">
   <a href="https://github.com/dunamismax/nicegui-blog">
     <img src="https://readme-typing-svg.demolab.com/?font=Inter&weight=600&size=28&pause=1000&color=713A90&center=true&vCenter=true&width=1200&height=90&lines=Modern+Dark+Theme+Blog+Built+with+NiceGUI;Python+3.13+%2B+NiceGUI+v2.22.1+%2B+FastAPI;Beautiful+Purple+%26+Orange+Design+System;Lightning+Fast+TTL+Multi-Layer+Caching;Real-Time+Search+with+Smart+Pagination;Advanced+Image+Optimization+%26+Lazy+Loading;File-Based+Content+with+Zero+Dependencies;Production+Ready+Standalone+Executables;Comprehensive+Security+%26+XSS+Protection;Open+Source+MIT+Licensed+Framework" alt="Typing SVG" />
   </a>
