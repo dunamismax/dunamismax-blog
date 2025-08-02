@@ -25,12 +25,12 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
 
 <p align="center">
   <a href="https://blog.dunamismax.com/">
-    <img src="https://img.shields.io/badge/Live-Demo-713A90.svg?style=for-the-badge&logo=rocket&logoColor=white" alt="Live Demo">
+    <img src="https://img.shields.io/badge/Live-Demo-E67E22.svg?style=for-the-badge&logo=rocket&logoColor=white" alt="Live Demo">
   </a>
 </p>
 
 <details>
-<summary>Click to view the blog in action</summary>
+<summary style="color: #E67E22; font-weight: 500;">Click to view the blog in action</summary>
 <p align="center">
   <img src="https://github.com/dunamismax/images/blob/main/python/website-interaction-recording-high-quality.gif" alt="NiceGUI Blog Demo">
 </p>
