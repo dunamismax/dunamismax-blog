@@ -284,87 +284,6 @@ def filter_posts_by_tags(
     ]
 
 
-def update_tag_filter(selected: set[str]) -> None:
-    """Update active tag filter and refresh posts."""
-    global active_tags, filtered_posts, current_page
-    active_tags = list(selected)
-    current_page = 1
-    posts = get_cached_posts()
-    filtered_posts_all = apply_filter(search_query, posts)
-    if active_tags:
-        filtered_posts_all = filter_posts_by_tags(active_tags, filtered_posts_all)
-    filtered_posts, _ = get_paginated_posts(
-        filtered_posts_all, current_page, posts_per_page
-    )
-    render_posts.refresh()
-    create_pagination.refresh()
-
-
-async def open_tags_dialog(tags: list[str]) -> None:
-    """Display a dialog with all tags and apply selection without scroll jank."""
-    scroll_pos = await ui.run_javascript("window.scrollY", timeout=1)
-    dialog = ui.dialog()
-
-    async def restore_scroll() -> None:
-        await ui.run_javascript(f"window.scrollTo(0, {scroll_pos})")
-
-    dialog.on("hide", restore_scroll)
-
-    selected = set(active_tags)
-    with dialog, ui.card().classes("p-4 min-w-[250px]"):
-        ui.label("Filter by Tags").classes("text-lg font-bold mb-2")
-        with ui.column().classes("gap-2"):
-            for tag in tags:
-                ui.checkbox(
-                    tag,
-                    value=tag in selected,
-                    on_change=lambda e, t=tag: (
-                        selected.add(t) if e.value else selected.discard(t),
-                        update_tag_filter(selected),
-                    ),
-                )
-        ui.button("Close", on_click=dialog.close).classes("mt-4")
-    dialog.open()
-
-
-async def open_bookmarks_dialog() -> None:
-    """Display a dialog with bookmarked posts from local storage without scroll jank."""
-    scroll_pos = await ui.run_javascript("window.scrollY", timeout=1)
-    dialog = ui.dialog()
-
-    async def restore_scroll() -> None:
-        await ui.run_javascript(f"window.scrollTo(0, {scroll_pos})")
-
-    dialog.on("hide", restore_scroll)
-
-    with dialog, ui.card().classes("p-4 min-w-[250px]"):
-        ui.label("Bookmarked Posts").classes("text-lg font-bold mb-2")
-        container = ui.column().classes("gap-2")
-        ui.button("Close", on_click=dialog.close).classes("mt-4")
-
-    async def populate() -> None:
-        slugs = await ui.run_javascript(
-            "JSON.parse(localStorage.getItem('bookmarks') || '[]')",
-            timeout=1,
-        )
-        posts = get_cached_posts()
-        bookmark_posts = [p for p in posts if p["slug"] in slugs]
-        container.clear()
-        with container:
-            if bookmark_posts:
-                for p in bookmark_posts:
-                    ui.link(
-                        p.get("title", "Untitled"),
-                        f"/blog/{p['slug']}",
-                        new_tab=False,
-                    ).classes("no-underline")
-            else:
-                ui.label("No bookmarks yet").classes("opacity-70")
-
-    dialog.open()
-    ui.timer(0.1, populate, once=True)
-
-
 def get_paginated_posts(
     posts: list[dict[str, Any]], page: int, per_page: int
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -408,82 +327,6 @@ def change_page(new_page: int) -> None:
 
     render_posts.refresh()
     create_pagination.refresh()
-
-
-def create_blog_stats(posts: list[dict[str, Any]]) -> ui.element:
-    """Create a stats card showing blog metrics."""
-    with (
-        ui.card().classes("blog-stats w-full") as stats_card,
-        ui.row().classes("justify-around items-center"),
-    ):
-        with ui.column().classes("items-center"):
-            ui.label(str(len(posts))).classes("text-2xl font-bold").style(
-                "color: var(--purple-accent)"
-            )
-            ui.label("Posts").classes("text-sm opacity-70")
-
-        with ui.column().classes("items-center"):
-            total_words = sum(post.get("word_count", 0) for post in posts)
-            ui.label(f"{total_words:,}").classes("text-2xl font-bold").style(
-                "color: var(--orange-accent)"
-            )
-            ui.label("Words").classes("text-sm opacity-70")
-
-        with ui.column().classes("items-center"):
-            avg_read_time = max(1, total_words // len(posts) // 200) if posts else 0
-            ui.label(f"{avg_read_time}").classes("text-2xl font-bold").style(
-                "color: var(--purple-accent)"
-            )
-            ui.label("Min Read").classes("text-sm opacity-70")
-    return stats_card
-
-
-def create_meta_cards(posts: list[dict[str, Any]]) -> ui.element:
-    """Create a collapsible menu with stats, tags, and bookmarks."""
-    unique_tags = sorted({tag for post in posts for tag in post.get("tags", [])})
-    with (
-        ui.expansion("Menu", icon="menu")
-        .classes("menu-expansion")
-        .props("header-class=menu-header") as expansion
-    ):
-        with ui.column().classes("gap-4 mt-2 w-full"):
-            create_blog_stats(posts)
-
-            with (
-                ui.card().classes(
-                    "blog-stats cursor-pointer w-full",
-                ) as tags_card,
-                ui.column().classes("items-center"),
-            ):
-                ui.label(str(len(unique_tags))).classes("text-2xl font-bold").style(
-                    "color: var(--purple-accent)"
-                )
-                ui.label("Tags").classes("text-sm opacity-70")
-            tags_card.on("click", lambda: ui.run_async(open_tags_dialog(unique_tags)))
-
-            with (
-                ui.card().classes(
-                    "blog-stats cursor-pointer w-full",
-                ) as bookmarks_card,
-                ui.column().classes("items-center"),
-            ):
-                bookmark_count = (
-                    ui.label("0")
-                    .classes("text-2xl font-bold")
-                    .style("color: var(--orange-accent)")
-                )
-                ui.label("Bookmarks").classes("text-sm opacity-70")
-            bookmarks_card.on("click", lambda: ui.run_async(open_bookmarks_dialog()))
-
-        async def set_bookmark_count() -> None:
-            count = await ui.run_javascript(
-                "JSON.parse(localStorage.getItem('bookmarks') || '[]').length",
-                timeout=1,
-            )
-            bookmark_count.text = str(count)
-
-        ui.timer(0.1, set_bookmark_count, once=True)
-    return expansion
 
 
 @ui.refreshable
@@ -654,12 +497,7 @@ def blog_index(request: Request) -> None:
             )
             filtered_posts[:] = paginated_posts
 
-            with ui.row().classes(
-                "w-full justify-center items-center gap-2 mb-6 flex-wrap"
-            ):
-                create_search_bar()
-                if posts:  # Show stats based on all posts, not just current page
-                    create_meta_cards(posts)
+            create_search_bar()
 
             render_posts()
             create_pagination()
@@ -747,46 +585,6 @@ def blog_post(slug: str) -> None:
                     ui.button("Share", icon="share", on_click=do_share).props(
                         "flat size=sm"
                     ).style("color: var(--orange-accent)")
-
-                    bookmark_button = ui.button("", icon="bookmark_border").props(
-                        "flat size=sm"
-                    )
-
-                    async def toggle_bookmark() -> None:
-                        js = f"""
-                        let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
-                        const i = bookmarks.indexOf('{slug}');
-                        let marked;
-                        if (i >= 0) {{
-                            bookmarks.splice(i, 1);
-                            marked = false;
-                        }} else {{
-                            bookmarks.push('{slug}');
-                            marked = true;
-                        }}
-                        localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-                        return marked;
-                        """
-                        marked = await ui.run_javascript(js, timeout=1)
-                        bookmark_button.props(
-                            "icon=bookmark" if marked else "icon=bookmark_border"
-                        )
-                        ui.notify(
-                            "Saved to bookmarks" if marked else "Removed from bookmarks"
-                        )
-
-                    bookmark_button.on_click(toggle_bookmark)
-
-                    async def set_initial() -> None:
-                        js = (
-                            "JSON.parse(localStorage.getItem('bookmarks') || '[]').includes('"
-                            f"{slug}')"
-                        )
-                        marked = await ui.run_javascript(js, timeout=1)
-                        if marked:
-                            bookmark_button.props("icon=bookmark")
-
-                    ui.timer(0.1, set_initial, once=True)
 
             # Navigation to other posts
             all_posts = get_cached_posts()
