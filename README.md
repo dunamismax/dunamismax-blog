@@ -58,10 +58,6 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
 </tr>
 </table>
 
-<p align="center">
-  <img src="https://github.com/dunamismax/images/blob/main/python/Repo-Features.png" alt="Repository Features" width="300" />
-</p>
-
 * **Enhanced Search & Pagination**: Real-time search with smart pagination (5 posts per page)
 * **Image Optimization**: Lazy loading, responsive images with hover effects
 * **Modern Header Design**: Gradient background, feature badges, improved typography
@@ -89,6 +85,10 @@ nicegui-blog/
 ```
 
 ---
+
+<p align="center">
+  <img src="https://github.com/dunamismax/images/blob/main/python/Repo-Features.png" alt="Repository Features" width="300" />
+</p>
 
 ## Quick Start
 
