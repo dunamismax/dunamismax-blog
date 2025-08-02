@@ -261,6 +261,12 @@ def apply_filter(query: str, posts: list[dict[str, Any]]) -> list[dict[str, Any]
     ]
 
 
+def filter_posts_by_tag(tag: str, posts: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Return posts that contain a specific tag."""
+    t = tag.lower()
+    return [post for post in posts if t in [p.lower() for p in post.get("tags", [])]]
+
+
 def get_paginated_posts(
     posts: list[dict[str, Any]], page: int, per_page: int
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -445,13 +451,11 @@ def render_posts() -> None:
                     ).classes("font-medium").style("color: var(--orange-accent)")
 
                     if post.get("tags"):
-                        with ui.row().classes("gap-1"):
+                        with ui.row().classes("gap-1 flex-wrap"):
                             for tag in post["tags"][:3]:
-                                ui.label(f"#{tag}").classes(
-                                    "text-xs px-2 py-1 rounded-full"
-                                ).style(
-                                    "background-color: var(--purple-accent); color: white"
-                                )
+                                ui.link(
+                                    f"#{tag}", f"/blog?tag={tag}", new_tab=False
+                                ).classes("tag-pill text-xs")
 
 
 def create_scroll_to_top() -> ui.element:
@@ -480,9 +484,11 @@ def index() -> None:
 
 
 @ui.page("/blog")
-def blog_index() -> None:
-    """Blog index page displaying all posts."""
+def blog_index(request: Request) -> None:
+    """Blog index page displaying all posts with optional tag filter."""
     add_global_styles()
+
+    tag = request.query_params.get("tag", "")
 
     with ui.column().classes("w-full items-center min-h-screen"):
         create_header()
@@ -492,7 +498,9 @@ def blog_index() -> None:
             ui.column().classes("max-w-4xl w-full px-4"),
         ):
             posts = get_cached_posts()
-            # Apply pagination to initial load
+            if tag:
+                posts = filter_posts_by_tag(tag, posts)
+
             paginated_posts, _ = get_paginated_posts(
                 posts, current_page, posts_per_page
             )
@@ -567,26 +575,69 @@ def blog_post(slug: str) -> None:
 
             # Article footer with tags and sharing
             with ui.row().classes(
-                "justify-between items-center mt-8 pt-6 border-t border-gray-300"
+                "justify-between items-center mt-8 pt-6 border-t border-gray-300 flex-wrap"
             ):
-                # Tags section
                 if post.get("tags"):
-                    with ui.column().classes("gap-2"):
+                    with ui.row().classes("items-center gap-2 flex-wrap"):
                         ui.label("Tags:").classes("text-sm font-medium opacity-70")
-                        with ui.row().classes("gap-2 flex-wrap"):
-                            for tag in post["tags"]:
-                                ui.label(f"#{tag}").classes(
-                                    "text-sm px-3 py-1 rounded-full cursor-pointer transition-colors"
-                                ).style(
-                                    "background-color: var(--purple-accent); color: white"
-                                )
+                        for tag in post["tags"]:
+                            ui.link(
+                                f"#{tag}", f"/blog?tag={tag}", new_tab=False
+                            ).classes("tag-pill text-sm")
 
-                # Social sharing (placeholder)
                 with ui.row().classes("gap-2"):
-                    ui.button("Share", icon="share").props("flat size=sm").style(
-                        "color: var(--orange-accent)"
+
+                    async def do_share() -> None:
+                        js = (
+                            "if (navigator.share){navigator.share({title: document.title, url: window.location.href});}"
+                            "else{navigator.clipboard.writeText(window.location.href);}"
+                        )
+                        await ui.run_javascript(js)
+                        ui.notify("Link copied to clipboard")
+
+                    ui.button("Share", icon="share", on_click=do_share).props(
+                        "flat size=sm"
+                    ).style("color: var(--orange-accent)")
+
+                    bookmark_button = ui.button("", icon="bookmark_border").props(
+                        "flat size=sm"
                     )
-                    ui.button("", icon="bookmark_border").props("flat size=sm")
+
+                    async def toggle_bookmark() -> None:
+                        js = f"""
+                        let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+                        const i = bookmarks.indexOf('{slug}');
+                        let marked;
+                        if (i >= 0) {{
+                            bookmarks.splice(i, 1);
+                            marked = false;
+                        }} else {{
+                            bookmarks.push('{slug}');
+                            marked = true;
+                        }}
+                        localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+                        return marked;
+                        """
+                        marked = await ui.run_javascript(js, timeout=1)
+                        bookmark_button.props(
+                            "icon=bookmark" if marked else "icon=bookmark_border"
+                        )
+                        ui.notify(
+                            "Saved to bookmarks" if marked else "Removed from bookmarks"
+                        )
+
+                    bookmark_button.on_click(toggle_bookmark)
+
+                    async def set_initial() -> None:
+                        js = (
+                            "JSON.parse(localStorage.getItem('bookmarks') || '[]').includes('"
+                            f"{slug}')"
+                        )
+                        marked = await ui.run_javascript(js, timeout=1)
+                        if marked:
+                            bookmark_button.props("icon=bookmark")
+
+                    ui.timer(0.1, set_initial, once=True)
 
             # Navigation to other posts
             all_posts = get_cached_posts()

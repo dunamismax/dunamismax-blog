@@ -183,6 +183,19 @@
             box-shadow: 0 8px 25px rgba(113, 58, 144, 0.2);
         }
 
+        .tag-pill {
+            background-color: var(--purple-accent);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .tag-pill:hover {
+            background-color: var(--orange-accent);
+        }
+
         /* Image optimization */
         img[loading="lazy"] {
             opacity: 0;

@@ -4,7 +4,7 @@ from typing import Any
 
 from starlette.requests import Request
 
-from app.main import apply_filter, is_admin_authorized
+from app.main import apply_filter, filter_posts_by_tag, is_admin_authorized
 
 
 def make_request(query: str = "") -> Request:
@@ -35,3 +35,12 @@ def test_is_admin_authorized(monkeypatch) -> None:
     assert not is_admin_authorized(make_request("token=bad"))
     monkeypatch.delenv("BLOG_ADMIN_TOKEN", raising=False)
     assert not is_admin_authorized(make_request("token=secret"))
+
+
+def test_filter_posts_by_tag() -> None:
+    posts = [
+        {"title": "Python", "tags": ["dev", "python"]},
+        {"title": "Other", "tags": ["misc"]},
+    ]
+    assert filter_posts_by_tag("python", posts) == [posts[0]]
+    assert filter_posts_by_tag("unknown", posts) == []
