@@ -42,13 +42,13 @@ SECURITY_HEADERS = {
     "X-Frame-Options": "DENY",
     "X-XSS-Protection": "1; mode=block",
     "Strict-Transport-Security": "max-age=31536000",
-    # Allow NiceGUI's inline scripts/styles and required CDN resources
+    # Allow NiceGUI's inline scripts and Vue's eval while restricting external resources
     "Content-Security-Policy": (
         "default-src 'self'; "
-        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://fonts.googleapis.com; "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
         "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; "
         "font-src 'self' https://fonts.gstatic.com; "
-        "img-src 'self' data:; "
+        "img-src 'self' data: blob:; "
         "connect-src 'self';"
     ),
 }
@@ -339,7 +339,7 @@ def add_global_styles() -> None:
           });
         }
         </script>
-        <script src=\"https://unpkg.com/web-vitals@3/dist/web-vitals.iife.js\"></script>
+        <script src=\"/static/web-vitals.iife.js\"></script>
         <script>
         function sendToAnalytics(metric) {
           navigator.sendBeacon('/vitals', JSON.stringify(metric));

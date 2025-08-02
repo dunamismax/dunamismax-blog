@@ -69,7 +69,7 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
 * **Web Vitals Analytics**: Real-time performance monitoring with PageSpeed Insights
 * **Optimized CSS**: PostCSS pipeline with autoprefixer and cssnano
 * **Automatic WebP**: Pillow converts images to WebP for smaller downloads
-* **Security Headers**: Middleware sets strict CSP while allowing required inline scripts and trusted CDNs
+* **Security Headers**: Middleware sets strict CSP while allowing required inline scripts, Vue's eval, blob images, and local web-vitals with CDN styles and fonts
 * **Modern Header Design**: Gradient background, feature badges, improved typography
 * **Comprehensive Favicon Support**: All device formats with proper meta tags
 * **Advanced Styling**: Custom scrollbars, smooth animations, enhanced hover effects
