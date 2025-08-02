@@ -30,12 +30,14 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
 </p>
 
 <details>
-<summary>
-  <img src="https://img.shields.io/badge/Click_to_view_the_blog_in_action-E67E22.svg?style=for-the-badge&logo=image&logoColor=white" alt="Click to view the blog in action">
+<summary style="cursor: pointer; padding: 12px; background: linear-gradient(135deg, #713A90, #E67E22); color: white; border-radius: 8px; text-align: center; font-weight: bold; margin: 8px 0; list-style: none;">
+  Click to view the blog in action ▼
 </summary>
+<div style="margin-top: 16px;">
 <p align="center">
-  <img src="https://github.com/dunamismax/images/blob/main/python/website-interaction-recording-high-quality.gif" alt="NiceGUI Blog Demo">
+  <img src="https://github.com/dunamismax/images/blob/main/python/website-interaction-recording-high-quality.gif" alt="NiceGUI Blog Demo" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
 </p>
+</div>
 </details>
 
 <p align="center">
