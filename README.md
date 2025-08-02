@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/dunamismax/images/blob/main/python/NiceBlog.png" alt="NiceGUI Dark Blog" width="400" />
+  <img src="https://github.com/dunamismax/images/blob/main/python/NiceBlog.png" alt="NiceGUI Dark Blog" width="300" />
 </p>
 
 <p align="center">
@@ -59,7 +59,7 @@ Featuring beautiful purple & orange aesthetics with lightning-fast performance
 </table>
 
 <p align="center">
-  <img src="https://github.com/dunamismax/images/blob/main/python/Repo-Features.png" alt="Repository Features" width="400" />
+  <img src="https://github.com/dunamismax/images/blob/main/python/Repo-Features.png" alt="Repository Features" width="300" />
 </p>
 
 * **Enhanced Search & Pagination**: Real-time search with smart pagination (5 posts per page)
@@ -305,7 +305,7 @@ ps aux | grep nicegui-blog
 </table>
 
 <p align="center">
-  <img src="https://github.com/dunamismax/images/blob/main/python/NiceGUI.png" alt="Repository Features Overview" width="400" />
+  <img src="https://github.com/dunamismax/images/blob/main/python/NiceGUI.png" alt="Repository Features Overview" width="300" />
 </p>
 
 ## License
